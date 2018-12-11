@@ -9,8 +9,8 @@ body {
     overflow: hidden;
 }
 
-#troll {
-    position: absolute;
+.char {
+    position: fixed;
     width: 100vh;
     height: 100%;
     background-repeat: no-repeat;

@@ -1,11 +1,15 @@
 //For future reference: 76 x 88
 
-var troll = $('#troll');
+var player = $('#player');
+var enemy = $('#enemy');
 
 var creatures = {};
+var active = ["troll_1","troll_3"];
+
 const images = "assets/images/";
 var preloader = [];
 var debounce = false;
+var entered = false;
 
 function addAnim(creature, animName, frames, size, bgX, bgY, wait, plays) {
     //Checking for existing creature name
@@ -15,6 +19,7 @@ function addAnim(creature, animName, frames, size, bgX, bgY, wait, plays) {
     };
     const originName = animName; //For grabbing the image name
     newCreature.currFrame = 0;
+    newCreature.currentAnim = "walk";   
     animName = animName.toLowerCase();
     newCreature[animName] = {};
     newCreature[animName].keyFrames = [];
@@ -39,34 +44,87 @@ function addAnim(creature, animName, frames, size, bgX, bgY, wait, plays) {
     creatures[creature] = newCreature;
 };
 
-var testCreature = "troll_3";
+function attack(troll,name,origPos,pos) {
+    entered = false;
+    creatures[name].currentAnim = "walk";
+    creatures[name].currFrame = 0;
+    troll.animate({"left":pos},2000,function() {
+        creatures[name].currentAnim = "attack";   
+        setTimeout(function() {
+            if (active.indexOf(name) == 0) {
+                creatures[active[1]].currentAnim = "hurt";
+                enemy.css("filter","hue-rotate(300deg)");
+            };
+        },400);
+        setTimeout(function(){
+            creatures[name]['attack'].frame = 0;
+            creatures[name].currentAnim = "walk";
+            troll.css("transform","scaleX(-1)");
+            troll.animate({"left":origPos},2000,function() {
+                creatures[name].currentAnim = "idle";
+                troll.css("transform","scaleX(1)");
+                entered = true;
+            });
+        },600);
+    });
+};
 
-// addAnim("troll_1","Idle", 10, "65%", "65%", "60%", 3, "loop");
-// addAnim("troll_1","Walk", 10, "72%", "73%", "60%", 4, "loop");
-// addAnim("troll_1","Dead", 10, "73%", "88%", "79%", 4, 1);
-// addAnim("troll_1","Hurt", 10, "73%", "43%", "50%", 4, 1);
-// addAnim("troll_1","Attack", 10, "100%", "", "", 4, 1);
+addAnim("troll_1","Idle", 10, "65%", "65%", "60%", Math.floor(Math.random()*3)+3, "loop");
+addAnim("troll_1","Walk", 10, "72%", "73%", "60%", 4, "loop");
+addAnim("troll_1","Dead", 10, "73%", "88%", "79%", 4, 1);
+addAnim("troll_1","Hurt", 10, "73%", "43%", "50%", 4, 1);
+addAnim("troll_1","Attack", 10, "100%", "", "", 4, 1);
 
-troll.css("left","-45%");
+addAnim("troll_2","Idle", 10, "65%", "65%", "60%", Math.floor(Math.random()*3)+3, "loop");
+addAnim("troll_2","Walk", 9, "72%", "73%", "60%", 4, "loop");
+addAnim("troll_2","Dead", 10, "73%", "88%", "79%", 4, 1);
+addAnim("troll_2","Hurt", 10, "73%", "43%", "50%", 4, 1);
+addAnim("troll_2","Attack", 10, "100%", "", "", 4, 1);
 
-addAnim(testCreature,"Idle", 10, "65%", "65%", "60%", 3, "loop");
-addAnim(testCreature,"Walk", 9, "72%", "73%", "60%", 4, "loop");
-addAnim(testCreature,"Dead", 10, "73%", "88%", "79%", 4, 1);
-addAnim(testCreature,"Hurt", 10, "73%", "43%", "50%", 4, 1);
-addAnim(testCreature,"Attack", 10, "100%", "", "", 4, 1);
+addAnim("troll_3","Idle", 10, "65%", "65%", "60%", Math.floor(Math.random()*3)+3, "loop");
+addAnim("troll_3","Walk", 9, "72%", "73%", "60%", 4, "loop");
+addAnim("troll_3","Dead", 10, "73%", "88%", "79%", 4, 1);
+addAnim("troll_3","Hurt", 10, "73%", "43%", "50%", 5, 1);
+addAnim("troll_3","Attack", 10, "100%", "", "", 4, 1);
 
-creatures[testCreature].currentAnim = "walk";
+player.css("left","-85vh");
+enemy.css("left","185vh");
+
+enemy.css("transform","scaleX(-1)");
+
+
+
+enemy.animate({"left":"80vh"},5000,"linear", function() {
+    creatures[active[1]].currentAnim = "idle";
+});
+
+player.animate({"left":"20vh"},5000,"linear", function() {
+    creatures[active[0]].currentAnim = "idle";
+    entered = true;
+});
 
 var animInt = setInterval(function(){ 
-    var arr = Object.keys(creatures);
-    for (var i = 0; i < arr.length; i++) {
-        var creature = creatures[arr[i]];
+    for (var i = 0; i < active.length; i++) {
+        var creature = creatures[active[i]];
         var anim = creature[creature.currentAnim];
+        var troll;
+        if (i == 0) {
+            troll = player;
+        }
+        else {
+            troll = enemy;
+        };
         if (anim && creature.currFrame % anim.wait == 0) {
             troll.css("background-image","url(" + anim.keyFrames[anim.frame] + ")");
             troll.css("background-size",anim.size);
             troll.css("background-position-x",anim.bgX);
             troll.css("background-position-y",anim.bgY);
+            if (creature.currentAnim == "attack") {
+                troll.css("z-index",5); 
+            }
+            else {
+                troll.css("z-index",1); 
+            };
             anim.frame++;
             if (anim.frame >= anim.keyFrames.length ) {
                 anim.frame = 0;
@@ -75,6 +133,9 @@ var animInt = setInterval(function(){
                     // troll.slideUp();
                 }
                 else if (anim.plays != "loop") {
+                    if (creature.currentAnim == "hurt") {
+                        enemy.css("filter","hue-rotate(0deg)");
+                    };
                     creature.currentAnim = "idle";
                     creature.currFrame = 0;
                 };
@@ -84,28 +145,27 @@ var animInt = setInterval(function(){
     };
 },17);
 
-troll.animate({"left":"20%"},5000,"linear", function() {
-    creatures[testCreature].currentAnim = "idle";
-});
-
-
 $(document).on("keyup", function(event) {
+    if (!entered) {
+        return;
+    };
     switch (event.key) {
         case " ":
-            creatures[testCreature].currentAnim = "attack";
+            attack(player,active[0],"20vh","60vh");
         break;
         case "w":
-            creatures[testCreature].currentAnim = "walk";
+            creatures[active[0]].currentAnim = "walk";
         break;
         case "h":
-            creatures[testCreature].currentAnim = "hurt";
+            creatures[active[0]].currentAnim = "hurt";
         break;
         case "d":
-            creatures[testCreature].currentAnim = "dead";
+            creatures[active[0]].currentAnim = "dead";
         break;
         case "b":
-            creatures[testCreature].currentAnim = "break";
+            creatures[active[0]].currentAnim = "break";
         break;
     };
-    creatures[testCreature].currFrame = 0;
+    creatures[active[0]].currFrame = 0;
 });
+
