@@ -1,10 +1,12 @@
 //For future reference: 76 x 88
 
 var troll = document.getElementById('troll');
+
 var creatures = {};
 const images = "assets/images/";
+var preloader = [];
 
-function addAnim(creature, animName, frames, size, wait, plays) {
+function addAnim(creature, animName, frames, size, bgX, bgY, wait, plays) {
     //Checking for existing creature name
     var newCreature = creatures[creature];
     if (!newCreature) {
@@ -16,6 +18,8 @@ function addAnim(creature, animName, frames, size, wait, plays) {
     newCreature[animName] = {};
     newCreature[animName].keyFrames = [];
     newCreature[animName].size = size;
+    newCreature[animName].bgX = bgX;
+    newCreature[animName].bgY = bgY;
     newCreature[animName].wait = wait;
     newCreature[animName].frame = 0;
     newCreature[animName].plays = plays;
@@ -28,15 +32,17 @@ function addAnim(creature, animName, frames, size, wait, plays) {
             pos = "0" + i;
         }
         newCreature[animName].keyFrames.push(images + creature + "/" + originName + "_" + pos + ".png");
+        preloader.unshift(new Image());
+        preloader[0].src = images + creature + "/" + originName + "_" + pos + ".png";
     };
     creatures[creature] = newCreature;
 };
 
-addAnim("troll_1","Idle", 10, "45%", 3, "loop");
-addAnim("troll_1","Walk", 10, "45%", 4, "loop");
-addAnim("troll_1","Dead", 10, "45%", 3, "loop");
-addAnim("troll_1","Hurt", 10, "55%", 4, "loop");
-addAnim("troll_1","Attack", 10, "85%", 4, 1);
+addAnim("troll_1","Idle", 10, "65%", "65%", "60%", 3, "loop");
+addAnim("troll_1","Walk", 10, "72%", "73%", "60%", 4, "loop");
+addAnim("troll_1","Dead", 10, "73%", "88%", "79%", 4, 1);
+addAnim("troll_1","Hurt", 10, "73%", "43%", "50%", 4, 1);
+addAnim("troll_1","Attack", 10, "100%", "", "", 4, 1);
 
 creatures["troll_1"].currentAnim = "idle";
 
@@ -46,18 +52,21 @@ var animInt = setInterval(function(){
         var creature = creatures[arr[i]];
         var anim = creature[creature.currentAnim];
         if (anim && creature.currFrame % anim.wait == 0) {
-            troll.src = anim.keyFrames[anim.frame];
+            troll.style.backgroundImage = "url(" + anim.keyFrames[anim.frame] + ")";
+            troll.style.backgroundSize = anim.size;
+            troll.style.backgroundPositionX = anim.bgX;
+            troll.style.backgroundPositionY = anim.bgY;
             anim.frame++;
             if (anim.frame >= anim.keyFrames.length ) {
                 anim.frame = 0;
-                if (anim.plays != "loop") {
+                if (creature.currentAnim == "dead") {
+                    anim.frame = anim.keyFrames.length-1;
+                }
+                else if (anim.plays != "loop") {
                     creature.currentAnim = "idle";
                     creature.currFrame = 0;
                 };
             };
-        };
-        if (anim && troll.complete) {
-            troll.style.height = anim.size;
         };
         creature.currFrame++;
     };
@@ -75,6 +84,11 @@ document.onkeyup = function(event) {
     }
     else if (event.key == "h") {
         creatures["troll_1"].currentAnim = "hurt";
+        creatures["troll_1"].currFrame = 0;
+    }
+    else if (event.key == "d") {
+        creatures["troll_1"]["dead"].frame = 0;
+        creatures["troll_1"].currentAnim = "dead";
         creatures["troll_1"].currFrame = 0;
     }
     else if (event.key == "b") {

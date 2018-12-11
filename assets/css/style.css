@@ -3,16 +3,16 @@ html,body {
 }
 
 body {
-    height: 100%;
     background-image: url("../images/backdrop.gif");
     background-size: cover;
     background-repeat: no-repeat;
+    overflow: hidden;
 }
 
-img {
+#troll {
     position: absolute;
-    /* padding-right: 65%; */
-    height: 45%;
-    display: block;
-    bottom: 0;
+    width: 100vh;
+    height: 100%;
+    background-repeat: no-repeat;
+    bottom: -20%;
 }
