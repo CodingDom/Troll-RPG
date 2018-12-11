@@ -8,3 +8,12 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
 }
+
+img {
+    position: relative;
+    /* width: 25%; */
+    padding-right: 70%;
+    height: 30%;
+    display: block;
+    bottom: 0;
+}
