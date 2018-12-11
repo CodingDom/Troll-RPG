@@ -93,7 +93,7 @@ $(document).on("keyup", function(event) {
             creatures["troll_1"].currentAnim = "hurt";
         break;
         case "d":
-            creatures["troll_1"].currentAnim = "death";
+            creatures["troll_1"].currentAnim = "dead";
         break;
         case "b":
             creatures["troll_1"].currentAnim = "break";
