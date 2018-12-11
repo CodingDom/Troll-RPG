@@ -1,10 +1,11 @@
 //For future reference: 76 x 88
 
-var troll = document.getElementById('troll');
+var troll = $('#troll');
 
 var creatures = {};
 const images = "assets/images/";
 var preloader = [];
+var debounce = false;
 
 function addAnim(creature, animName, frames, size, bgX, bgY, wait, plays) {
     //Checking for existing creature name
@@ -44,7 +45,9 @@ addAnim("troll_1","Dead", 10, "73%", "88%", "79%", 4, 1);
 addAnim("troll_1","Hurt", 10, "73%", "43%", "50%", 4, 1);
 addAnim("troll_1","Attack", 10, "100%", "", "", 4, 1);
 
-creatures["troll_1"].currentAnim = "idle";
+creatures["troll_1"].currentAnim = "walk";
+
+troll.css("left","-45%");
 
 var animInt = setInterval(function(){ 
     var arr = Object.keys(creatures);
@@ -52,15 +55,16 @@ var animInt = setInterval(function(){
         var creature = creatures[arr[i]];
         var anim = creature[creature.currentAnim];
         if (anim && creature.currFrame % anim.wait == 0) {
-            troll.style.backgroundImage = "url(" + anim.keyFrames[anim.frame] + ")";
-            troll.style.backgroundSize = anim.size;
-            troll.style.backgroundPositionX = anim.bgX;
-            troll.style.backgroundPositionY = anim.bgY;
+            troll.css("background-image","url(" + anim.keyFrames[anim.frame] + ")");
+            troll.css("background-size",anim.size);
+            troll.css("background-position-x",anim.bgX);
+            troll.css("background-position-y",anim.bgY);
             anim.frame++;
             if (anim.frame >= anim.keyFrames.length ) {
                 anim.frame = 0;
                 if (creature.currentAnim == "dead") {
                     anim.frame = anim.keyFrames.length-1;
+                    troll.slideUp();
                 }
                 else if (anim.plays != "loop") {
                     creature.currentAnim = "idle";
@@ -72,27 +76,28 @@ var animInt = setInterval(function(){
     };
 },17);
 
+troll.animate({"left":"20%"},5000,"linear", function() {
+    creatures["troll_1"].currentAnim = "idle";
+});
 
-document.onkeyup = function(event) {
-    if (event.key == " ") {
-        creatures["troll_1"].currentAnim = "attack";
-        creatures["troll_1"].currFrame = 0;
-    }
-    else if (event.key == "w") {
-        creatures["troll_1"].currentAnim = "walk";
-        creatures["troll_1"].currFrame = 0;
-    }
-    else if (event.key == "h") {
-        creatures["troll_1"].currentAnim = "hurt";
-        creatures["troll_1"].currFrame = 0;
-    }
-    else if (event.key == "d") {
-        creatures["troll_1"]["dead"].frame = 0;
-        creatures["troll_1"].currentAnim = "dead";
-        creatures["troll_1"].currFrame = 0;
-    }
-    else if (event.key == "b") {
-        creatures["troll_1"].currentAnim = "break";
-        creatures["troll_1"].currFrame = 0;
-    }
-}
+
+$(document).on("keyup", function(event) {
+    switch (event.key) {
+        case " ":
+            creatures["troll_1"].currentAnim = "attack";
+        break;
+        case "w":
+            creatures["troll_1"].currentAnim = "walk";
+        break;
+        case "h":
+            creatures["troll_1"].currentAnim = "hurt";
+        break;
+        case "d":
+            creatures["troll_1"].currentAnim = "death";
+        break;
+        case "b":
+            creatures["troll_1"].currentAnim = "break";
+        break;
+    };
+    creatures["troll_1"].currFrame = 0;
+});
