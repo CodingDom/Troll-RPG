@@ -1,5 +1,6 @@
 html,body {
     height: 100%;
+    font-family: 'Bungee', cursive;
 }
 
 body {
@@ -9,10 +10,33 @@ body {
     overflow: hidden;
 }
 
-.char {
+#ui-container {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 20;
+}
+
+#overlay {
+    position: fixed;
+    visibility: hidden;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    background-color: black;
+    opacity: 0.25;
+}
+
+.char-holder {
     position: fixed;
     width: 100vh;
     height: 100%;
-    background-repeat: no-repeat;
     bottom: -20%;
+}
+
+.char {
+    position: absolute;
+    height:100%;
+    width: 100%;
+    background-repeat: no-repeat;
 }

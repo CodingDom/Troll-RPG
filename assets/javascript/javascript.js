@@ -55,11 +55,37 @@ function addAnim(creature, animName, frames, size, bgX, bgY, wait, plays) {
     creatures[creature] = newCreature; //To ensure the creature is up to date within the list of creatures
 };
 
+function damageDisplay(troll,dmg) {
+    var newTag = $('<h2>');
+    //Default styling for damage display
+    var style = {
+        "position":"absolute",
+        "top":"40%",
+        "color":"red",
+        "font-size":"24px",
+    }
+    //Which side to base positioning on
+    var dir = "right";
+    if (troll == enemy) {
+        dir = "left";
+    };
+    style[dir] = "53%";
+    newTag.css(style);
+    newTag.text("-" + dmg);
+    newTag.insertBefore(troll); //So troll will display in the foreground
+    newTag.animate({"top":"15%"},500);
+    setTimeout(function() {
+        newTag.animate({"opacity":0},350,function(){
+            newTag.remove();
+        });
+    },200);
+};
+
 function attack(troll,name) {
     entered = false;
     creatures[name].currentAnim = "walk";
     creatures[name].currFrame = 0;
-    var originPos = parseInt(troll.css("left").match(/\d+/)[0]); //Grabs number from string
+    var originPos = parseInt(troll.parent().css("left").match(/\d+/)[0]); //Grabs number from string
     var moveTo = window.innerHeight*0.4; //40% of the window height or 40vh
     var newPos;
     var direction;
@@ -72,12 +98,13 @@ function attack(troll,name) {
         direction = -1;
     }
     originPos = originPos + "px";
-    troll.animate({"left":newPos},2000,function() {
+    troll.parent().animate({"left":newPos},2000,function() {
         creatures[name].currentAnim = "attack";   
         setTimeout(function() {
             if (direction == 1) {
                 creatures[active[1]].currentAnim = "hurt";
                 enemy.css("filter","hue-rotate(300deg)");
+                damageDisplay(enemy,30);
             }
             else {
                 creatures[active[0]].currentAnim = "hurt";
@@ -87,7 +114,7 @@ function attack(troll,name) {
                 creatures[name]['attack'].frame = 0;
                 creatures[name].currentAnim = "walk";
                 troll.css("transform","scaleX(" + -direction + ")");
-                troll.animate({"left":originPos},2000,function() {
+                troll.parent().animate({"left":originPos},2000,function() {
                     creatures[name].currentAnim = "idle";
                     troll.css("transform","scaleX(" + direction + ")");
                     entered = true;
@@ -122,18 +149,18 @@ $(document).ready(function(){
 player = $("#player");
 enemy = $("#enemy");
 
-player.css("left","-85vh");
-enemy.css("left","185vh");
+player.parent().css("left","-85vh");
+enemy.parent().css("left","185vh");
 
 enemy.css("transform","scaleX(-1)");
 
 
 
-enemy.animate({"left":"80vh"},5000,"linear", function() {
+enemy.parent().animate({"left":"80vh"},5000,"linear", function() {
     creatures[active[1]].currentAnim = "idle";
 });
 
-player.animate({"left":"20vh"},5000,"linear", function() {
+player.parent().animate({"left":"20vh"},5000,"linear", function() {
     creatures[active[0]].currentAnim = "idle";
     entered = true;
 });
@@ -155,10 +182,10 @@ function update(){
             troll.css("background-position-x",anim.bgX);
             troll.css("background-position-y",anim.bgY);
             if (creature.currentAnim == "attack") {
-                troll.css("z-index",5); 
+                troll.parent().css("z-index",5); 
             }
             else {
-                troll.css("z-index",1); 
+                troll.parent().css("z-index",1); 
             };
             anim.frame++;
             if (anim.frame >= anim.keyFrames.length ) {
