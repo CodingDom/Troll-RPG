@@ -83,6 +83,7 @@ function damageDisplay(troll,dmg) {
 
 function attack(troll,name) {
     entered = false;
+    $(".swapper").css("border-color","red");
     creatures[name].currentAnim = "walk";
     creatures[name].currFrame = 0;
     var originPos = parseInt(troll.parent().css("left").match(/\d+/)[0]); //Grabs number from string
@@ -118,6 +119,7 @@ function attack(troll,name) {
                     creatures[name].currentAnim = "idle";
                     troll.css("transform","scaleX(" + direction + ")");
                     entered = true;
+                    $(".swapper").css("border-color","white");
                 });
             },200);
         },400);
