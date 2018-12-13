@@ -16,23 +16,25 @@ var myGameData = {
     playerStats: {
         hp: 120,
         maxHp: 120,
-        power: 6,
         dmgMultiplier: 1,
     },
-    enemyStats: {
+    defaultStats: {
         ["troll_1"]: {
             hp: 120,
             maxHp: 120,
+            power: 6,
             counter: 5,
         },
         ["troll_2"]: {
             hp: 150,
             maxHp: 150,
+            power: 8,
             counter: 12,
         },
         ["troll_3"]: {
-            hp: 150,
-            maxHp: 150,
+            hp: 180,
+            maxHp: 180,
+            power: 10,
             counter: 25,
         },
     },
@@ -55,8 +57,8 @@ var myGameFunctions = {
         let hp, maxHp, active;
         if (user == "enemy") {
             active = myGameData.active[1];
-            hp = myGameData.enemyStats[active].hp;
-            maxHp = myGameData.enemyStats[active].maxHp;
+            hp = myGameData.defaultStats[active].hp;
+            maxHp = myGameData.defaultStats[active].maxHp;
         }
         else {
             hp = myGameData.playerStats.hp;
@@ -83,7 +85,7 @@ var myGameFunctions = {
         let dir;
         if (troll == enemy) {
             dir = "left";
-            myGameData.enemyStats[myGameData.active[1]].hp -= dmg;
+            myGameData.defaultStats[myGameData.active[1]].hp -= dmg;
             this.healthUpdate("enemy");
         }
         else {
@@ -127,14 +129,14 @@ var myGameFunctions = {
                 if (direction == 1) {
                     myGameData.creatures.enemy[myGameData.active[1]].currentAnim = "hurt";
                     enemy.css("filter",(enemy.tribe + "brightness(75%)"));
-                    myGameFunctions.damageDisplay(enemy,myGameData.playerStats.power*myGameData.playerStats.dmgMultiplier);
+                    myGameFunctions.damageDisplay(enemy,myGameData.defaultStats[name].power*myGameData.playerStats.dmgMultiplier);
                     myGameData.playerStats.dmgMultiplier++;
-                    $("#player-power").text(myGameData.playerStats.power*myGameData.playerStats.dmgMultiplier);
+                    $("#player-power").text(myGameData.defaultStats[name].power*myGameData.playerStats.dmgMultiplier);
                 }
                 else {
                     myGameData.creatures.player[myGameData.active[0]].currentAnim = "hurt";
                     player.css("filter",(player.tribe + "brightness(75%)"));
-                    myGameFunctions.damageDisplay(player,myGameData.enemyStats[name].counter);
+                    myGameFunctions.damageDisplay(player,myGameData.defaultStats[name].counter);
                 };
                 setTimeout(function(){
                     myGameData.creatures[user][name]['attack'].frame = 0;
@@ -145,7 +147,7 @@ var myGameFunctions = {
                         troll.css("transform","scaleX(" + direction + ")");
                         entered = true;
                         $(".swapper").css({"background-color":""});
-                        if (troll == player && myGameData.enemyStats[myGameData.active[1]].hp > 0) {
+                        if (troll == player && myGameData.defaultStats[myGameData.active[1]].hp > 0) {
                             myGameFunctions.attack(enemy,"enemy",myGameData.active[1]);
                         };
                     });
@@ -174,7 +176,7 @@ var myGameFunctions = {
             enemy.css("transform","scaleX(1)");
             enemy.parent().animate({"left":"185vh"},5000,function(){
                 enemy.css("transform","scaleX(-1)");
-                if (myGameData.enemyStats[myGameData.active[1]].hp != 0) {
+                if (myGameData.defaultStats[myGameData.active[1]].hp != 0) {
                     $("#" + myGameData.active[1]).css("display","block");
                 };
                 $("#enemy-health").find(".thumbnail").css("background-image",$("#" + newTroll).css("background-image"));
@@ -342,20 +344,24 @@ var myGameArea = {
         };
 
         $(".swapper").on("click", function(event) {
+            var name = this.className.split(" ")[0];
             switch (currentPick) {
                 case "player":
                 $(this).parent().css("display","none");
                 $("#start-title").text("Select An Opponent");
                 $("#player-health .thumbnail").removeClass($("#player-health .thumbnail").prop("className").split(" ")[0]);
-                $("#player-health .thumbnail").addClass(this.className.split(" ")[0]);
+                $("#player-health .thumbnail").addClass(name);
+                $("#player-power").text(myGameData.defaultStats[name].power*myGameData.playerStats.dmgMultiplier);
+                myGameData.playerStats.hp = myGameData.defaultStats[name].maxHp;
+                myGameData.playerStats.maxHp = myGameData.defaultStats[name].maxHp;
                 currentPick = "enemy";
                 player.tribe = myGameData.tribes[$(this).parent().prop("id")];
-                myGameData.active[0] = this.className.split(" ")[0];
+                myGameData.active[0] = name;
                 break;
                 case "enemy":
                 currentPick = "none";
                 enemy.tribe = myGameData.tribes[$(this).parent().prop("id")];
-                myGameData.active[1] = this.className.split(" ")[0];
+                myGameData.active[1] = name;
                 $("#overlay, #start-screen-ui").css({"display":"none"})
                 myGameArea.start();
                 break;
