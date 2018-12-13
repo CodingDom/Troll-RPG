@@ -277,6 +277,74 @@ var myGameArea = {
         };
         
     },
+    loadUp: function(){
+        var loaded = 0;
+
+        for (var i = 0; i < preloader.length; i++) {
+            preloader[i].onload = function() {
+                loaded++;
+                $("#load-bar").css("width",((loaded/preloader.length)*100) + "%");
+            };
+        };
+
+        var numDots = 0;
+
+        var loading = setInterval(function() {
+            if (loaded >= preloader.length) {
+                $("#load-text").text("Loaded");
+                setTimeout(function() {
+                    $("#overlay").animate({"opacity":0},2000,function() {
+                        $(this).html("");
+                        myGameArea.start();
+                    });
+                },4000)
+                
+                clearInterval(loading);
+                return;
+            };
+            var dots = "";
+            for (var i = 0; i < numDots; i++) {
+                dots += ".";
+            }
+            $("#load-text").text("Loading" + dots);
+            numDots = numDots%3
+            numDots++;
+        }, 50);
+    },
+    start: function() {
+        tick = setInterval(myGameFunctions.update,17);
+
+        enemy.parent().animate({"left":"80vh"},5000,"linear", function() {
+            myGameData.creatures.enemy[myGameData.active[1]].currentAnim = "idle";
+        });
+        
+        player.parent().animate({"left":"20vh"},5000,"linear", function() {
+            myGameData.creatures.player[myGameData.active[0]].currentAnim = "idle";
+            entered = true;
+        });
+        
+        $(".swapper").on("click", function(event) {
+            if (myGameData.active[1] != this.id) {
+                myGameFunctions.swapEnemy(this.id);
+            }
+        });
+        
+        $(document).on("keyup", function(event) {
+            if (entered != true) {
+                return;
+            };
+            var key = event.key.toLowerCase();
+            switch (key) {
+                case " ":
+                myGameFunctions.attack(player,"player",myGameData.active[0]);
+                break;
+                case "b":
+                    myGameData.creatures.player[myGameData.active[0]].currentAnim = "break";
+                break;
+            };
+            myGameData.creatures.player[myGameData.active[0]].currFrame = 0;
+        });
+    },
 };
 
 //Adding each set of animation tracks
@@ -301,16 +369,16 @@ myGameArea.addAnim("troll_3","Attack", 10, "100%", "", "", 4, 1);
 $(document).ready(function(){
 
 player = $("#player");
-player.tribe = myGameData.tribes["grassland"];
 enemy = $("#enemy");
+
+player.tribe = myGameData.tribes["grassland"];
 enemy.tribe = myGameData.tribes["sunflower"];
 
-myGameFunctions.healthUpdate("enemy");
 myGameFunctions.healthUpdate("player");
+myGameFunctions.healthUpdate("enemy");
 
 player.parent().css("left","-85vh");
 enemy.parent().css("left","185vh");
-
 
 player.css("filter",player.tribe);
 $("#player-health").find(".thumbnail").css("filter",player.tribe);
@@ -321,40 +389,7 @@ $("#enemy-health").find(".thumbnail").css("filter",enemy.tribe);
 enemy.css("filter",enemy.tribe);
 enemy.css("transform","scaleX(-1)");
 
-
-
-enemy.parent().animate({"left":"80vh"},5000,"linear", function() {
-    myGameData.creatures.enemy[myGameData.active[1]].currentAnim = "idle";
-});
-
-player.parent().animate({"left":"20vh"},5000,"linear", function() {
-    myGameData.creatures.player[myGameData.active[0]].currentAnim = "idle";
-    entered = true;
-});
-
-tick = setInterval(myGameFunctions.update,17);
-
-$(".swapper").on("click", function(event) {
-    if (myGameData.active[1] != this.id) {
-        myGameFunctions.swapEnemy(this.id);
-    }
-});
-
-$(document).on("keyup", function(event) {
-    if (entered != true) {
-        return;
-    };
-    var key = event.key.toLowerCase();
-    switch (key) {
-        case " ":
-        myGameFunctions.attack(player,"player",myGameData.active[0]);
-        break;
-        case "b":
-            myGameData.creatures.player[myGameData.active[0]].currentAnim = "break";
-        break;
-    };
-    myGameData.creatures.player[myGameData.active[0]].currFrame = 0;
-});
+myGameArea.loadUp();
 
 //Resume when the user returns to the game window
 $(window).focus(function(){

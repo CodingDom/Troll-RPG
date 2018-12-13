@@ -19,12 +19,32 @@ body {
 
 #overlay {
     position: fixed;
-    visibility: hidden;
     height: 100%;
     width: 100%;
     z-index: 5;
     background-color: black;
-    opacity: 0.25;
+}
+
+#load-container {
+    position: relative;
+    margin: 30% 40%;
+    color: white;
+}
+
+#load-bar-background {
+    height: 10px;
+    width: 300px;
+    background-color: grey;
+    border: 1px solid grey;
+    border-radius: 30px;
+    text-align: center;
+}
+
+#load-bar {
+    height: 100%;
+    width: 0;
+    background-color: yellow;
+    border-radius: 30px;
 }
 
 .health {
@@ -53,6 +73,7 @@ body {
     background-size: 300%;
     background-position: 20% -15%;
     background-repeat: no-repeat;
+    background-color: rgba(0, 255, 0, 0.2);
     border: 1px solid white;
 }
 
