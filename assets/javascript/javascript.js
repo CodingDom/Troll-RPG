@@ -7,7 +7,14 @@ var enemy;
 
 //List of creatures
 var creatures = {};
+var tribes = {
+    "grassland":"",
+    "frostbite":"saturate(4) hue-rotate(90deg)",
+    "sunflower":"saturate(7) hue-rotate(305deg)",
+};
+
 var active = ["troll_1","troll_3"]; //The creatures on the battlefield
+var activeTribes = ["grassland","frostbite"]; //The tribes(teams) on the battlefield
 
 const images = "assets/images/";
 var preloader = []; //Preloading all of the sprite animations
@@ -105,12 +112,12 @@ function attack(troll,name) {
         setTimeout(function() {
             if (direction == 1) {
                 creatures[active[1]].currentAnim = "hurt";
-                enemy.css("filter","hue-rotate(300deg)");
+                enemy.css("filter",(enemy.tribe + "brightness(75%)"));
                 damageDisplay(enemy,30);
             }
             else {
                 creatures[active[0]].currentAnim = "hurt";
-                player.css("filter","hue-rotate(300deg)");
+                player.css("filter",(player.tribe + "brightness(75%)"));
             };
             setTimeout(function(){
                 creatures[name]['attack'].frame = 0;
@@ -127,7 +134,6 @@ function attack(troll,name) {
         
     });
 };
-//saturate(4) hue-rotate(90deg)
 
 //Adding each set of animation tracks
 addAnim("troll_1","Idle", 10, "65%", "65%", "60%", Math.floor(Math.random()*3)+3, "loop");
@@ -151,11 +157,18 @@ addAnim("troll_3","Attack", 10, "100%", "", "", 4, 1);
 $(document).ready(function(){
 
 player = $("#player");
+player.tribe = tribes["grassland"];
 enemy = $("#enemy");
+enemy.tribe = tribes["frostbite"]
 
 player.parent().css("left","-85vh");
 enemy.parent().css("left","185vh");
 
+
+player.css("filter",player.tribe);
+
+$(".swapper").css("filter",enemy.tribe);
+enemy.css("filter",enemy.tribe);
 enemy.css("transform","scaleX(-1)");
 
 
@@ -199,7 +212,7 @@ function update(){
                 }
                 else if (anim.plays != "loop") {
                     if (creature.currentAnim == "hurt") {
-                        troll.css("filter","hue-rotate(0deg)");
+                        troll.css("filter",troll.tribe);
                     };
                     creature.currentAnim = "idle";
                     creature.currFrame = 0;

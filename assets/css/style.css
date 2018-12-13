@@ -27,12 +27,59 @@ body {
     opacity: 0.25;
 }
 
+.health {
+    position: absolute;
+    top: 10px;
+    height: 90px;
+    width: 300px;
+    background-color: rgba(245, 245, 220, 0.3);
+    border: 2px solid white;
+}
+
+#player-health {
+    left: 20px;
+}
+
+#enemy-health {
+    right: 20px;
+    transform: scaleX(-1);
+}
+
+#enemy-health p {
+    transform: scaleX(-1);
+}
+
+.health-bar-background {
+    position: absolute;
+    right: 2%;
+    bottom: 10%;
+    height: 15%;
+    width: 75%;
+    background-color: red;
+    border: 1px solid black;
+    border-radius: 30px;
+    text-align: center;
+}
+
+.health-bar-background p {
+    position: absolute;
+    left: 35%;
+}
+
+.health-bar {
+    height: 100%;
+    width: 75%;
+    background-color: green;
+    border-radius: 30px;
+}
+
 #swap-enemy {
     position: fixed;
-    right: 0;
-    top: 17%;
+    right: 20px;
+    top: 125px;
     width: 100px;
     background-color: rgba(220, 241, 245, 0.5);
+    border: 2px solid white;
     text-align: center;
 }
 
