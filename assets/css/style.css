@@ -56,18 +56,22 @@ body {
     border: 1px solid white;
 }
 
-#player-name, #player-tribe {
+#player-health .curr-info {
     position: absolute;
     left: 30%;
 }
 
-#enemy-name, #enemy-tribe {
+#enemy-health .curr-info {
     position: absolute;
     right: 0;
 }
 
 .curr-info-tribe {
     top: 20%;
+}
+
+.curr-info-power {
+    top: 40%;
 }
 
 #enemy-health p {
