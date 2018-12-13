@@ -24,6 +24,7 @@ var debounce = false;
 var entered = false; 
 
 function addAnim(creature, animName, frames, size, bgX, bgY, wait, plays) {
+    const originName = animName; //Before it changes to lower case
     //Creating seperate character objects for both player and enemy
     for (var i = 0; i < 2; i++) {
     let user;
@@ -66,11 +67,11 @@ function addAnim(creature, animName, frames, size, bgX, bgY, wait, plays) {
             pos = "0" + i;
         }
         //Adding image location to the current animation's keyFrame list
-        newCreature[animName].keyFrames.push(images + creature + "/" + animName + "_" + pos + ".png");
+        newCreature[animName].keyFrames.push(images + creature + "/" + originName + "_" + pos + ".png");
         if (user == "player") {
             //Preloading each image
             preloader.unshift(new Image());
-            preloader[0].src = images + creature + "/" + animName + "_" + pos + ".png";
+            preloader[0].src = images + creature + "/" + originName + "_" + pos + ".png";
         }
     };
     
