@@ -45,16 +45,41 @@ body {
     transform: scaleX(-1);
 }
 
+.thumbnail {
+    position: absolute;
+    left: 0;
+    height: 75%;
+    width: 25%;
+    background-size: 300%;
+    background-position: 20% -15%;
+    background-repeat: no-repeat;
+    border: 1px solid white;
+}
+
+#player-name, #player-tribe {
+    position: absolute;
+    left: 30%;
+}
+
+#enemy-name, #enemy-tribe {
+    position: absolute;
+    right: 0;
+}
+
+.curr-info-tribe {
+    top: 20%;
+}
+
 #enemy-health p {
     transform: scaleX(-1);
 }
 
 .health-bar-background {
     position: absolute;
-    right: 2%;
-    bottom: 10%;
+    right: 0;
+    top: 60%;
     height: 15%;
-    width: 75%;
+    width: 70%;
     background-color: red;
     border: 1px solid black;
     border-radius: 30px;
@@ -102,15 +127,15 @@ body {
     box-shadow: 0px 2px 0px 2px green inset;
 }
 
-#troll_1 {
+.troll_1 {
     background-image: url("../images/troll_1/Idle_000.png");   
 }
 
-#troll_2 {
+.troll_2 {
     background-image: url("../images/troll_2/Idle_000.png");
 }
 
-#troll_3 {
+.troll_3 {
     background-image: url("../images/troll_3/Idle_000.png");
 }
 

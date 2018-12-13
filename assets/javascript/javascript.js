@@ -17,7 +17,6 @@ var tribes = {
 };
 
 var active = ["troll_1","troll_3"]; //The creatures on the battlefield
-var activeTribes = ["grassland","frostbite"]; //The tribes(teams) on the battlefield
 
 const images = "assets/images/";
 var preloader = []; //Preloading all of the sprite animations
@@ -84,8 +83,9 @@ function swapEnemy(newTroll) {
     if (!entered) {return};
     entered = false;
     if (enemy.css("opacity") == 0) {
-        enemy.css({"opacity":"1","left":"185vh","background-image":"url('" + image + newTroll + "')"});
+        enemy.css({"opacity":"1","left":"185vh"});
         active[1] = newTroll;
+        $("#enemy-health").find(".thumbnail").css("background-image",$("#" + newTroll).css("background-image"));
         enemy.parent().animate({"left":"80vh"},5000,"linear", function() {
             creatures.enemy[active[1]].currentAnim = "idle";
             entered = true;
@@ -96,7 +96,8 @@ function swapEnemy(newTroll) {
         enemy.css("transform","scaleX(1)");
         enemy.parent().animate({"left":"185vh"},5000,function(){
             enemy.css("transform","scaleX(-1)");
-            active[1] = newTroll;
+            active[1] = newTroll;        
+            $("#enemy-health").find(".thumbnail").css("background-image",creatures.enemy[newTroll].idle.keyFrames[0]);
             enemy.parent().animate({"left":"80vh"},5000,"linear", function() {
                 creatures.enemy[active[1]].currentAnim = "idle";
                 entered = true;
@@ -201,15 +202,17 @@ $(document).ready(function(){
 player = $("#player");
 player.tribe = tribes["grassland"];
 enemy = $("#enemy");
-enemy.tribe = tribes["frostbite"]
+enemy.tribe = tribes["sunflower"];
 
 player.parent().css("left","-85vh");
 enemy.parent().css("left","185vh");
 
 
 player.css("filter",player.tribe);
+$("#player-health").find(".thumbnail").css("filter",player.tribe);
 
 $(".swapper").css("filter",enemy.tribe);
+$("#enemy-health").find(".thumbnail").css("filter",enemy.tribe);
 enemy.css("filter",enemy.tribe);
 enemy.css("transform","scaleX(-1)");
 
@@ -285,15 +288,6 @@ $(document).on("keyup", function(event) {
         case " ":
             attack(player,"player",active[0]);
         break;
-        case "w":
-            creatures.player[active[0]].currentAnim = "walk";
-        break;
-        case "h":
-            creatures.player[active[0]].currentAnim = "hurt";
-        break;
-        case "d":
-            creatures.player[active[0]].currentAnim = "dead";
-        break;
         case "b":
             creatures.player[active[0]].currentAnim = "break";
         break;
@@ -303,8 +297,10 @@ $(document).on("keyup", function(event) {
 
 //Resume when the user returns to the game window
 $(window).focus(function(){
+    console.log(tick);
     if (tick){return};
     clearTimeout(autoPause);
+    autoPause = undefined;
     //Reloading images to fix flickering issues
     var newPreloader = [];
     for (var i = 0; i < preloader.length; i++) {
@@ -320,6 +316,7 @@ $(window).focus(function(){
 
 //Pause when the user leaves game window
 $(window).blur(function(){
+    if (autoPause){return};
     autoPause = setTimeout(function(){
         clearInterval(tick);
         tick = undefined;

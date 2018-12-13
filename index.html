@@ -9,15 +9,21 @@
         <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
     </head>
     <body>
-        <div id="ui-container" class="char">
+        <div id="ui-container">
             <div id="overlay"></div>
             <div id="player-health" class="health">
+                <div class="troll_1 thumbnail"></div>
+                <p id="player-name" class="curr-info-name curr-info">Name: Grunt</p>
+                <p id="player-tribe" class="curr-info-tribe curr-info">Tribe: Grassland</p>
                 <div class="health-bar-background">
                     <p>100hp</p>
                     <div class="health-bar"></div>
                 </div>
             </div>
             <div id="enemy-health" class="health">
+                <div class="troll_3 thumbnail"></div>
+                <p id="enemy-name" class="curr-info-name curr-info">Name: Grunt</p>
+                <p id="enemy-tribe" class="curr-info-tribe curr-info">Tribe: Grassland</p>
                 <div class="health-bar-background">
                     <p>100hp</p>
                     <div class="health-bar"></div>
@@ -25,9 +31,9 @@
             </div>
             <div id="swap-enemy">
                 <p>Click To Swap</p>
-                <div id="troll_1" class="swapper"></div>
-                <div id="troll_2" class="swapper"></div>
-                <div id="troll_3" class="swapper"></div>
+                <div id="troll_1" class="troll_1 swapper"></div>
+                <div id="troll_2" class="troll_2 swapper"></div>
+                <div id="troll_3" class="troll_3 swapper"></div>
             </div>
         </div>
         <div class="char-holder">
