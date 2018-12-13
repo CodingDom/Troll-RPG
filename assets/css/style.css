@@ -27,7 +27,8 @@ body {
 
 #load-container {
     position: absolute;
-    margin: 30% 40%;
+    margin-top: 45vh;
+    margin-left: 45vw;
     color: white;
     font-size: 32px;
 }
@@ -46,6 +47,12 @@ body {
     width: 0;
     background-color: yellow;
     border-radius: 30px;
+}
+
+#gameplay-ui {
+    display: none;
+    height: 100%;
+    width: 100%;
 }
 
 .health {

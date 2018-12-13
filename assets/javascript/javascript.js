@@ -13,22 +13,27 @@ var entered = false;
 
 //Stored game data
 var myGameData = {
-    playerHealth: {
+    playerStats: {
         hp: 120,
         maxHp: 120,
+        power: 6,
+        dmgMultiplier: 1,
     },
-    enemyHealth: {
+    enemyStats: {
         ["troll_1"]: {
             hp: 120,
             maxHp: 120,
+            counter: 5,
         },
         ["troll_2"]: {
             hp: 150,
             maxHp: 150,
+            counter: 12,
         },
         ["troll_3"]: {
             hp: 150,
             maxHp: 150,
+            counter: 25,
         },
     },
     active: ["troll_1", "troll_3"], //The creatures on the battlefield
@@ -50,17 +55,17 @@ var myGameFunctions = {
         let hp, maxHp, active;
         if (user == "enemy") {
             active = myGameData.active[1];
-            hp = myGameData.enemyHealth[active].hp;
-            maxHp = myGameData.enemyHealth[active].maxHp;
+            hp = myGameData.enemyStats[active].hp;
+            maxHp = myGameData.enemyStats[active].maxHp;
         }
         else {
-            hp = myGameData.playerHealth.hp;
-            maxHp = myGameData.playerHealth.maxHp;
+            hp = myGameData.playerStats.hp;
+            maxHp = myGameData.playerStats.maxHp;
             active = myGameData.active[0];
         }
         $(healthFrame + " .health-bar-background p").text(hp + "hp");
         $(healthFrame + " .health-bar").css("width",((hp/maxHp)*100) + "%");
-        if (hp == 0) {
+        if (hp <= 0) {
             myGameData.creatures[user][active].currentAnim = "dead";
             myGameData.creatures[user][active].currFrame = 0;
         };
@@ -78,12 +83,12 @@ var myGameFunctions = {
         let dir;
         if (troll == enemy) {
             dir = "left";
-            myGameData.enemyHealth[myGameData.active[1]].hp -= dmg;
+            myGameData.enemyStats[myGameData.active[1]].hp -= dmg;
             this.healthUpdate("enemy");
         }
         else {
             dir = "right";
-            myGameData.playerHealth.hp -= dmg;
+            myGameData.playerStats.hp -= dmg;
             this.healthUpdate("player");
         }
         style[dir] = "53%";
@@ -121,11 +126,14 @@ var myGameFunctions = {
                 if (direction == 1) {
                     myGameData.creatures.enemy[myGameData.active[1]].currentAnim = "hurt";
                     enemy.css("filter",(enemy.tribe + "brightness(75%)"));
-                    myGameFunctions.damageDisplay(enemy,30);
+                    myGameFunctions.damageDisplay(enemy,myGameData.playerStats.power*myGameData.playerStats.dmgMultiplier);
+                    myGameData.playerStats.dmgMultiplier++;
+                    $("#player-power").text(myGameData.playerStats.power*myGameData.playerStats.dmgMultiplier);
                 }
                 else {
                     myGameData.creatures.player[myGameData.active[0]].currentAnim = "hurt";
                     player.css("filter",(player.tribe + "brightness(75%)"));
+                    myGameFunctions.damageDisplay(player,myGameData.enemyStats[name].counter);
                 };
                 setTimeout(function(){
                     myGameData.creatures[user][name]['attack'].frame = 0;
@@ -136,6 +144,9 @@ var myGameFunctions = {
                         troll.css("transform","scaleX(" + direction + ")");
                         entered = true;
                         $(".swapper").css({"background-color":""});
+                        if (troll == player && myGameData.enemyStats[myGameData.active[1]].hp > 0) {
+                            myGameFunctions.attack(enemy,"enemy",myGameData.active[1]);
+                        };
                     });
                 },200);
             },400);
@@ -146,12 +157,12 @@ var myGameFunctions = {
         if (!entered) {return};
         entered = false;
         if (enemy.css("opacity") == 0) {
-            enemy.css({"opacity":"1","left":"185vh"});
-    
-            $("#" + myGameData.active[1]).css("display","block");
             $("#enemy-health").find(".thumbnail").css("background-image",$("#" + newTroll).css("background-image"));
             $("#" + newTroll).css("display","none");
             myGameData.active[1] = newTroll;
+            enemy.parent().css("left","185vh");
+            enemy.css({"opacity":"1","filter":enemy.tribe});
+            this.healthUpdate("enemy");
             enemy.parent().animate({"left":"80vh"},5000,"linear", function() {
                 myGameData.creatures.enemy[myGameData.active[1]].currentAnim = "idle";
                 entered = true;
@@ -162,10 +173,13 @@ var myGameFunctions = {
             enemy.css("transform","scaleX(1)");
             enemy.parent().animate({"left":"185vh"},5000,function(){
                 enemy.css("transform","scaleX(-1)");
-                $("#" + myGameData.active[1]).css("display","block");
+                if (myGameData.enemyStats[myGameData.active[1]].hp != 0) {
+                    $("#" + myGameData.active[1]).css("display","block");
+                };
                 $("#enemy-health").find(".thumbnail").css("background-image",$("#" + newTroll).css("background-image"));
                 $("#" + newTroll).css("display","none");
                 myGameData.active[1] = newTroll;        
+                myGameFunctions.healthUpdate("enemy");
                 enemy.parent().animate({"left":"80vh"},5000,"linear", function() {
                     myGameData.creatures.enemy[myGameData.active[1]].currentAnim = "idle";
                     entered = true;
@@ -204,6 +218,12 @@ var myGameFunctions = {
                     anim.frame = 0;
                     if (creature.currentAnim == "dead") {
                         anim.frame = anim.keyFrames.length-1;
+                        if (troll.css("opacity") == 1) {
+                            troll.animate({"opacity":0},2000, function() {
+                                anim.frame = 0;
+                                creature.currentAnim = "idle";
+                            });
+                        }
                     }
                     else if (anim.plays != "loop") {
                         if (creature.currentAnim == "hurt") {
@@ -295,6 +315,7 @@ var myGameArea = {
                 setTimeout(function() {
                     $("#overlay").animate({"opacity":0},2000,function() {
                         $(this).html("");
+                        $(this).css("display","none");
                         myGameArea.start();
                     });
                 },4000)
@@ -311,8 +332,13 @@ var myGameArea = {
             numDots++;
         }, 200);
     },
+    intro: function() {
+
+    },
     start: function() {
         tick = setInterval(myGameFunctions.update,17);
+
+        $("#gameplay-ui").css("display","block");
 
         enemy.parent().animate({"left":"80vh"},5000,"linear", function() {
             myGameData.creatures.enemy[myGameData.active[1]].currentAnim = "idle";
