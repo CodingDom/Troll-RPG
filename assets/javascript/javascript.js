@@ -103,6 +103,7 @@ var myGameFunctions = {
         },200);
     },
     attack: function(troll,user,name) {
+        if (troll.css("opacity") != 1) {return;};
         entered = false;
         $(".swapper").css({"background-color":"rgba(0,0,0,0.5)"});
         myGameData.creatures[user][name].currentAnim = "walk";
@@ -312,11 +313,11 @@ var myGameArea = {
         var loading = setInterval(function() {
             if (loaded >= preloader.length) {
                 $("#load-text").text("Loaded");
+                myGameArea.intro();
                 setTimeout(function() {
-                    $("#overlay").animate({"opacity":0},2000,function() {
+                    $("#overlay").animate({"opacity":0.35},2000,function() {
                         $(this).html("");
-                        $(this).css("display","none");
-                        myGameArea.start();
+                        $("#start-screen-ui").css({"z-index":"10"});
                     });
                 },4000)
                 
@@ -333,10 +334,51 @@ var myGameArea = {
         }, 200);
     },
     intro: function() {
+        let currentPick = "player";
+        $("#gameplay-ui").css("display","none");
+        $("#start-screen-ui").css({"display":"block"});
+        if ($("#overlay").css("display") == "none") {
+            $("#overlay").css({"display":"block","opacity":0.35});
+        };
 
+        $(".swapper").on("click", function(event) {
+            switch (currentPick) {
+                case "player":
+                $(this).parent().css("display","none");
+                $("#start-title").text("Select An Opponent");
+                $("#player-health .thumbnail").removeClass($("#player-health .thumbnail").prop("className").split(" ")[0]);
+                $("#player-health .thumbnail").addClass(this.className.split(" ")[0]);
+                currentPick = "enemy";
+                player.tribe = myGameData.tribes[$(this).parent().prop("id")];
+                myGameData.active[0] = this.className.split(" ")[0];
+                break;
+                case "enemy":
+                currentPick = "none";
+                enemy.tribe = myGameData.tribes[$(this).parent().prop("id")];
+                myGameData.active[1] = this.className.split(" ")[0];
+                $("#overlay, #start-screen-ui").css({"display":"none"})
+                myGameArea.start();
+                break;
+            }
+        });
     },
     start: function() {
         tick = setInterval(myGameFunctions.update,17);
+
+        myGameFunctions.healthUpdate("player");
+        myGameFunctions.healthUpdate("enemy");
+
+        player.parent().css("left","-85vh");
+        enemy.parent().css("left","185vh");
+
+        player.css("filter",player.tribe);
+        $("#player-health").find(".thumbnail").css("filter",player.tribe);
+
+        $(".swapper").css("filter",enemy.tribe);
+        $("#" + myGameData.active[1]).css("display","none");
+        $("#enemy-health").find(".thumbnail").css("filter",enemy.tribe);
+        enemy.css("filter",enemy.tribe);
+        enemy.css("transform","scaleX(-1)");
 
         $("#gameplay-ui").css("display","block");
 
@@ -370,6 +412,33 @@ var myGameArea = {
             };
             myGameData.creatures.player[myGameData.active[0]].currFrame = 0;
         });
+
+        //Resume when the user returns to the game window
+        $(window).focus(function(){
+            clearTimeout(autoPause);
+            autoPause = undefined;
+            if (tick){return};
+            //Reloading images to fix flickering issues
+            var newPreloader = [];
+            for (var i = 0; i < preloader.length; i++) {
+                let newImg = new Image();
+                newImg.src = preloader[i].src;
+                newPreloader.push(newImg);
+            }
+            preloader = newPreloader;
+            newPreloader = null;
+            //Resume fps handler
+            tick = setInterval(myGameFunctions.update,17);
+        });
+
+        //Pause when the user leaves game window
+        $(window).blur(function(){
+            if (autoPause){return};
+            autoPause = setTimeout(function(){
+                clearInterval(tick);
+                tick = undefined;
+            },1000*60);
+        });
     },
 };
 
@@ -400,49 +469,19 @@ enemy = $("#enemy");
 player.tribe = myGameData.tribes["grassland"];
 enemy.tribe = myGameData.tribes["sunflower"];
 
-myGameFunctions.healthUpdate("player");
-myGameFunctions.healthUpdate("enemy");
-
-player.parent().css("left","-85vh");
-enemy.parent().css("left","185vh");
-
-player.css("filter",player.tribe);
-$("#player-health").find(".thumbnail").css("filter",player.tribe);
-
-$(".swapper").css("filter",enemy.tribe);
-$("#" + myGameData.active[1]).css("display","none");
-$("#enemy-health").find(".thumbnail").css("filter",enemy.tribe);
-enemy.css("filter",enemy.tribe);
-enemy.css("transform","scaleX(-1)");
+var tribeNames = Object.keys(myGameData.tribes);
+for (var i = 0; i < tribeNames.length; i++) {
+    const newTribe = $(`<div id="` + tribeNames[i] + `" class="tribe">
+    <p>` + tribeNames[i] + ` Tribe</p>
+    <div class="troll_1 swapper"></div>
+    <div class="troll_2 swapper"></div>
+    <div class="troll_3 swapper"></div>
+</div>`)
+    newTribe.css("filter",myGameData.tribes[tribeNames[i]]);
+    $("#start-screen-ui").append(newTribe);
+};
 
 myGameArea.loadUp();
-
-//Resume when the user returns to the game window
-$(window).focus(function(){
-    clearTimeout(autoPause);
-    autoPause = undefined;
-    if (tick){return};
-    //Reloading images to fix flickering issues
-    var newPreloader = [];
-    for (var i = 0; i < preloader.length; i++) {
-        let newImg = new Image();
-        newImg.src = preloader[i].src;
-        newPreloader.push(newImg);
-    }
-    preloader = newPreloader;
-    newPreloader = null;
-    //Resume fps handler
-    tick = setInterval(myGameFunctions.update,17);
-});
-
-//Pause when the user leaves game window
-$(window).blur(function(){
-    if (autoPause){return};
-    autoPause = setTimeout(function(){
-        clearInterval(tick);
-        tick = undefined;
-    },1000*60);
-});
 
 });
 
