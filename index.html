@@ -9,7 +9,9 @@
         <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
     </head>
     <body>
+        <!-- User Interface -->
         <div id="ui-container">
+            <!-- Overlay for load screen and pausing -->
             <div id="overlay">
                 <div id="load-container">
                     <p id="load-text">Loading</p>
@@ -17,7 +19,9 @@
                         <div id="load-bar"></div>
                     </div>
                 </div>
-            </div>
+            </div> <!-- End of Overlay -->
+
+            <!-- Health UI -->
             <div id="player-health" class="health">
                 <div class="troll_1 thumbnail"></div>
                 <p class="curr-info-name curr-info">Name: <span id="player-name">Grunt</span></p>
@@ -36,14 +40,17 @@
                     <p>100hp</p>
                     <div class="health-bar"></div>
                 </div>
-            </div>
+            </div> <!-- End of Health UI -->
+
+            <!-- Side UI -->
             <div id="swap-enemy">
                 <p>Click To Swap</p>
                 <div id="troll_1" class="troll_1 swapper"></div>
                 <div id="troll_2" class="troll_2 swapper"></div>
                 <div id="troll_3" class="troll_3 swapper"></div>
-            </div>
-        </div>
+            </div> <!-- End of Side UI -->
+        </div> <!-- End of UI -->
+
         <div class="char-holder">
             <div id="player" class="char"></div>
         </div>

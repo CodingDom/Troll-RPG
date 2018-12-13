@@ -26,9 +26,10 @@ body {
 }
 
 #load-container {
-    position: relative;
+    position: absolute;
     margin: 30% 40%;
     color: white;
+    font-size: 32px;
 }
 
 #load-bar-background {
