@@ -1,4 +1,5 @@
 var tick;
+var autoPause;
 
 //Grabbing character divs
 var player;
@@ -83,7 +84,7 @@ function damageDisplay(troll,dmg) {
 
 function attack(troll,name) {
     entered = false;
-    $(".swapper").css("border-color","red");
+    $(".swapper").css({"background-color":"rgba(255,0,0,0.3"});
     creatures[name].currentAnim = "walk";
     creatures[name].currFrame = 0;
     var originPos = parseInt(troll.parent().css("left").match(/\d+/)[0]); //Grabs number from string
@@ -119,13 +120,14 @@ function attack(troll,name) {
                     creatures[name].currentAnim = "idle";
                     troll.css("transform","scaleX(" + direction + ")");
                     entered = true;
-                    $(".swapper").css("border-color","white");
+                    $(".swapper").css({"background-color":""});
                 });
             },200);
         },400);
         
     });
 };
+//saturate(4) hue-rotate(90deg)
 
 //Adding each set of animation tracks
 addAnim("troll_1","Idle", 10, "65%", "65%", "60%", Math.floor(Math.random()*3)+3, "loop");
@@ -252,8 +254,10 @@ $(window).focus(function(){
 
 //Pause when the user leaves game window
 $(window).blur(function(){
-    clearInterval(tick);
-    tick = undefined;
+    autoPause = setTimeout(function(){
+        clearInterval(tick);
+        tick = undefined;
+    },1000*60);
 });
 
 });
