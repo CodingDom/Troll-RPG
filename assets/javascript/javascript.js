@@ -84,8 +84,11 @@ function swapEnemy(newTroll) {
     entered = false;
     if (enemy.css("opacity") == 0) {
         enemy.css({"opacity":"1","left":"185vh"});
-        active[1] = newTroll;
+
+        $("#" + active[1]).css("display","block");
         $("#enemy-health").find(".thumbnail").css("background-image",$("#" + newTroll).css("background-image"));
+        $("#" + newTroll).css("display","none");
+        active[1] = newTroll;
         enemy.parent().animate({"left":"80vh"},5000,"linear", function() {
             creatures.enemy[active[1]].currentAnim = "idle";
             entered = true;
@@ -96,8 +99,10 @@ function swapEnemy(newTroll) {
         enemy.css("transform","scaleX(1)");
         enemy.parent().animate({"left":"185vh"},5000,function(){
             enemy.css("transform","scaleX(-1)");
+            $("#" + active[1]).css("display","block");
+            $("#enemy-health").find(".thumbnail").css("background-image",$("#" + newTroll).css("background-image"));
+            $("#" + newTroll).css("display","none");
             active[1] = newTroll;        
-            $("#enemy-health").find(".thumbnail").css("background-image",creatures.enemy[newTroll].idle.keyFrames[0]);
             enemy.parent().animate({"left":"80vh"},5000,"linear", function() {
                 creatures.enemy[active[1]].currentAnim = "idle";
                 entered = true;
@@ -212,6 +217,7 @@ player.css("filter",player.tribe);
 $("#player-health").find(".thumbnail").css("filter",player.tribe);
 
 $(".swapper").css("filter",enemy.tribe);
+$("#" + active[1]).css("display","none");
 $("#enemy-health").find(".thumbnail").css("filter",enemy.tribe);
 enemy.css("filter",enemy.tribe);
 enemy.css("transform","scaleX(-1)");
