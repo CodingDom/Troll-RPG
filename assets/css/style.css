@@ -97,6 +97,11 @@ body {
     background-repeat: no-repeat;
 }
 
+.swapper:hover {
+    border-color: green;
+    box-shadow: 0px 2px 0px 2px green inset;
+}
+
 #troll_1 {
     background-image: url("../images/troll_1/Idle_000.png");   
 }

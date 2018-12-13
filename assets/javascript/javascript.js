@@ -6,7 +6,10 @@ var player;
 var enemy;
 
 //List of creatures
-var creatures = {};
+var creatures = {
+    player: {},
+    enemy: {}
+};
 var tribes = {
     "grassland":"",
     "frostbite":"saturate(4) hue-rotate(90deg)",
@@ -22,12 +25,21 @@ var debounce = false;
 var entered = false; 
 
 function addAnim(creature, animName, frames, size, bgX, bgY, wait, plays) {
+    //Creating seperate character objects for both player and enemy
+    for (var i = 0; i < 2; i++) {
+    let user;
+    if (i == 0) {
+        user = "player";
+    }
+    else {
+        user = "enemy";
+    };
     //Checking for existing creature name
-    var newCreature = creatures[creature];
+    let newCreature = creatures[user][creature];
     if (!newCreature) {
         newCreature = {};
     };
-    const originName = animName; //For grabbing the image name
+    
     newCreature.currFrame = 0; //FPS useage
 
     newCreature.currentAnim = "walk";   
@@ -43,9 +55,9 @@ function addAnim(creature, animName, frames, size, bgX, bgY, wait, plays) {
     newCreature[animName].bgX = bgX;
     newCreature[animName].bgY = bgY;
     newCreature[animName].size = size;
-
+    
     //Looping through current animation's keyFrames
-    for (var i = 0; i < frames; i++) {
+    for (let i = 0; i < frames; i++) {
         //Checking how many 0's to place before keyFrame number
         let pos = i;
         if (i < 10) {
@@ -55,12 +67,42 @@ function addAnim(creature, animName, frames, size, bgX, bgY, wait, plays) {
             pos = "0" + i;
         }
         //Adding image location to the current animation's keyFrame list
-        newCreature[animName].keyFrames.push(images + creature + "/" + originName + "_" + pos + ".png");
-        //Preloading each image
-        preloader.unshift(new Image());
-        preloader[0].src = images + creature + "/" + originName + "_" + pos + ".png";
+        newCreature[animName].keyFrames.push(images + creature + "/" + animName + "_" + pos + ".png");
+        if (user == "player") {
+            //Preloading each image
+            preloader.unshift(new Image());
+            preloader[0].src = images + creature + "/" + animName + "_" + pos + ".png";
+        }
     };
-    creatures[creature] = newCreature; //To ensure the creature is up to date within the list of creatures
+    
+    creatures[user][creature] = newCreature; //To ensure the creature is up to date within the list of creatures
+    };
+    
+};
+
+function swapEnemy(newTroll) {
+    if (!entered) {return};
+    entered = false;
+    if (enemy.css("opacity") == 0) {
+        enemy.css({"opacity":"1","left":"185vh","background-image":"url('" + image + newTroll + "')"});
+        active[1] = newTroll;
+        enemy.parent().animate({"left":"80vh"},5000,"linear", function() {
+            creatures.enemy[active[1]].currentAnim = "idle";
+            entered = true;
+        });
+    }
+    else {
+        creatures.enemy[active[1]].currentAnim = "walk";
+        enemy.css("transform","scaleX(1)");
+        enemy.parent().animate({"left":"185vh"},5000,function(){
+            enemy.css("transform","scaleX(-1)");
+            active[1] = newTroll;
+            enemy.parent().animate({"left":"80vh"},5000,"linear", function() {
+                creatures.enemy[active[1]].currentAnim = "idle";
+                entered = true;
+            });
+        });
+    };
 };
 
 function damageDisplay(troll,dmg) {
@@ -89,11 +131,11 @@ function damageDisplay(troll,dmg) {
     },200);
 };
 
-function attack(troll,name) {
+function attack(troll,user,name) {
     entered = false;
-    $(".swapper").css({"background-color":"rgba(255,0,0,0.3"});
-    creatures[name].currentAnim = "walk";
-    creatures[name].currFrame = 0;
+    $(".swapper").css({"background-color":"rgba(0,0,0,0.5)"});
+    creatures[user][name].currentAnim = "walk";
+    creatures[user][name].currFrame = 0;
     var originPos = parseInt(troll.parent().css("left").match(/\d+/)[0]); //Grabs number from string
     var moveTo = window.innerHeight*0.4; //40% of the window height or 40vh
     var newPos;
@@ -108,23 +150,23 @@ function attack(troll,name) {
     }
     originPos = originPos + "px";
     troll.parent().animate({"left":newPos},2000,function() {
-        creatures[name].currentAnim = "attack";   
+        creatures[user][name].currentAnim = "attack";   
         setTimeout(function() {
             if (direction == 1) {
-                creatures[active[1]].currentAnim = "hurt";
+                creatures.enemy[active[1]].currentAnim = "hurt";
                 enemy.css("filter",(enemy.tribe + "brightness(75%)"));
                 damageDisplay(enemy,30);
             }
             else {
-                creatures[active[0]].currentAnim = "hurt";
+                creatures.player[active[0]].currentAnim = "hurt";
                 player.css("filter",(player.tribe + "brightness(75%)"));
             };
             setTimeout(function(){
-                creatures[name]['attack'].frame = 0;
-                creatures[name].currentAnim = "walk";
+                creatures[user][name]['attack'].frame = 0;
+                creatures[user][name].currentAnim = "walk";
                 troll.css("transform","scaleX(" + -direction + ")");
                 troll.parent().animate({"left":originPos},2000,function() {
-                    creatures[name].currentAnim = "idle";
+                    creatures[user][name].currentAnim = "idle";
                     troll.css("transform","scaleX(" + direction + ")");
                     entered = true;
                     $(".swapper").css({"background-color":""});
@@ -174,25 +216,29 @@ enemy.css("transform","scaleX(-1)");
 
 
 enemy.parent().animate({"left":"80vh"},5000,"linear", function() {
-    creatures[active[1]].currentAnim = "idle";
+    creatures.enemy[active[1]].currentAnim = "idle";
 });
 
 player.parent().animate({"left":"20vh"},5000,"linear", function() {
-    creatures[active[0]].currentAnim = "idle";
+    creatures.player[active[0]].currentAnim = "idle";
     entered = true;
 });
 
 function update(){ 
     for (var i = 0; i < active.length; i++) {
-        var creature = creatures[active[i]];
-        var anim = creature[creature.currentAnim];
-        var troll;
+        let troll;
+        let user;
         if (i == 0) {
             troll = player;
+            user = "player";
         }
         else {
             troll = enemy;
+            user = "enemy";
         };
+        let creature = creatures[user][active[i]];
+        let anim = creature[creature.currentAnim];
+
         if (anim && creature.currFrame % anim.wait == 0) {
             troll.css("background-image","url(" + anim.keyFrames[anim.frame] + ")");
             troll.css("background-size",anim.size);
@@ -224,6 +270,12 @@ function update(){
 };
 tick = setInterval(update,17);
 
+$(".swapper").on("click", function(event) {
+    if (active[1] != this.id) {
+        swapEnemy(this.id);
+    }
+});
+
 $(document).on("keyup", function(event) {
     if (entered != true) {
         return;
@@ -231,27 +283,28 @@ $(document).on("keyup", function(event) {
     var key = event.key.toLowerCase();
     switch (key) {
         case " ":
-            attack(player,active[0]);
+            attack(player,"player",active[0]);
         break;
         case "w":
-            creatures[active[0]].currentAnim = "walk";
+            creatures.player[active[0]].currentAnim = "walk";
         break;
         case "h":
-            creatures[active[0]].currentAnim = "hurt";
+            creatures.player[active[0]].currentAnim = "hurt";
         break;
         case "d":
-            creatures[active[0]].currentAnim = "dead";
+            creatures.player[active[0]].currentAnim = "dead";
         break;
         case "b":
-            creatures[active[0]].currentAnim = "break";
+            creatures.player[active[0]].currentAnim = "break";
         break;
     };
-    creatures[active[0]].currFrame = 0;
+    creatures.player[active[0]].currFrame = 0;
 });
 
 //Resume when the user returns to the game window
 $(window).focus(function(){
     if (tick){return};
+    clearTimeout(autoPause);
     //Reloading images to fix flickering issues
     var newPreloader = [];
     for (var i = 0; i < preloader.length; i++) {
