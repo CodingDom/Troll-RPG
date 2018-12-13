@@ -461,6 +461,8 @@ myGameArea.addAnim("troll_3","Dead", 10, "73%", "88%", "79%", 4, 1);
 myGameArea.addAnim("troll_3","Hurt", 10, "73%", "43%", "50%", 5, 1);
 myGameArea.addAnim("troll_3","Attack", 10, "100%", "", "", 4, 1);
 
+
+//Where the game starts running
 $(document).ready(function(){
 
 player = $("#player");

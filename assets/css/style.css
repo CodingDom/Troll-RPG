@@ -69,8 +69,8 @@ body {
 
 .tribe {
     float: left;
-    width: 40%;
-    height: 25%;
+    width: 50vh;
+    height: 15vh;
     margin: 20px;
     font-size: 24px;
 }
