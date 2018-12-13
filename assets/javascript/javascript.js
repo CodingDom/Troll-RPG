@@ -309,7 +309,7 @@ var myGameArea = {
             $("#load-text").text("Loading" + dots);
             numDots = numDots%3
             numDots++;
-        }, 50);
+        }, 200);
     },
     start: function() {
         tick = setInterval(myGameFunctions.update,17);
