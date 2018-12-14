@@ -119,11 +119,12 @@ var myGameFunctions = {
         },200);
     },
     attack: function(troll,user,name) {
-        if (troll.css("opacity") != 1) {return;};
+        if (enemy.css("opacity") != 1 || player.css("opacity") != 1) {return;};
         entered = false;
+        const creature = myGameData.creatures[user][name];
         $(".swapper").css({"background-color":"rgba(0,0,0,0.5)"});
-        myGameData.creatures[user][name].currentAnim = "walk";
-        myGameData.creatures[user][name].currFrame = 0;
+        creature.currentAnim = "walk";
+        creature.currFrame = 0;
         var originPos = parseInt(troll.parent().css("left").match(/\d+/)[0]); //Grabs number from string
         var moveTo = window.innerHeight*0.4; //40% of the window height or 40vh
         var newPos;
@@ -136,14 +137,15 @@ var myGameFunctions = {
             newPos = originPos - moveTo + "px";
             direction = -1;
         }
-        originPos = originPos + "px";
+        originPos = originPos + "px"; //Position to walk back to after attacking
         troll.parent().animate({"left":newPos},2000,function() {
-            myGameData.creatures[user][name].currentAnim = "attack";   
+            creature.currentAnim = "attack";   
             setTimeout(function() {
                 if (direction == 1) {
                     myGameData.creatures.enemy[myGameData.active[1]].currentAnim = "hurt";
                     enemy.css("filter",(enemy.tribe + "brightness(75%)"));
                     myGameFunctions.damageDisplay(enemy,myGameData.defaultStats[name].power*myGameData.playerStats.dmgMultiplier);
+                    //Boosting player's attack power
                     myGameData.playerStats.dmgMultiplier++;
                     $("#player-power").text(myGameData.defaultStats[name].power*myGameData.playerStats.dmgMultiplier);
                 }
@@ -152,18 +154,19 @@ var myGameFunctions = {
                     player.css("filter",(player.tribe + "brightness(75%)"));
                     myGameFunctions.damageDisplay(player,myGameData.defaultStats[name].counter);
                 };
+                //Reposition after attack animation is over
                 setTimeout(function(){
-                    myGameData.creatures[user][name]['attack'].frame = 0;
-                    myGameData.creatures[user][name].currentAnim = "walk";
-                    troll.css("transform","scaleX(" + -direction + ")");
+                    creature.currentAnim = "walk";
+                    creature['attack'].frame = 0;
+                    troll.css("transform","scaleX(" + -direction + ")"); //Turn back around
                     troll.parent().animate({"left":originPos},2000,function() {
-                        myGameData.creatures[user][name].currentAnim = "idle";
+                        creature.currentAnim = "idle";
                         troll.css("transform","scaleX(" + direction + ")");
-                        entered = true;
                         $(".swapper").css({"background-color":""});
                         if (troll == player && myGameData.defaultStats[myGameData.active[1]].hp > 0) {
                             myGameFunctions.attack(enemy,"enemy",myGameData.active[1]);
                         };
+                        entered = true;
                     });
                 },200);
             },400);
@@ -351,7 +354,7 @@ var myGameArea = {
                         $(this).html("");
                         $("#start-screen-ui").css({"z-index":"10"});
                     });
-                },4000)
+                },1500)
                 
                 clearInterval(loading);
                 return;
@@ -367,42 +370,44 @@ var myGameArea = {
     },
     intro: function() {
         let currentPick = "player";
+        $("#start-title").text("Select A Character");
         $("#gameplay-ui").css("display","none");
         $("#start-screen-ui").css({"display":"block"});
         if ($("#overlay").css("display") == "none") {
             $("#overlay").css({"display":"block","opacity":0.35});
         };
 
+        clearInterval(tick);
+
+        var playerTribe; //To unhide tribe lists after picking is over
+        $(".swapper").off(); //Make sure no other events are connected to the function
         $(".swapper").on("click", function(event) {
+            var tribe = $(this).parent().prop("id");
             var name = this.className.split(" ")[0];
-            switch (currentPick) {
-                case "player":
-                $(this).parent().css("display","none");
+            
+            $("#" + currentPick + "-health .thumbnail").attr("class",name + " thumbnail"); //Updating health gui thumbnails
+            $("#" + currentPick + "-tribe").text(tribe);
+            $("#" + currentPick + "-name").text(myGameData.defaultStats[name].alias)
+
+            if (currentPick == "player") {
                 $("#start-title").text("Select An Opponent");
-                $("#player-health .thumbnail").removeClass($("#player-health .thumbnail").prop("className").split(" ")[0]);
-                $("#player-health .thumbnail").addClass(name);
                 $("#player-power").text(myGameData.defaultStats[name].power*myGameData.playerStats.dmgMultiplier);
-                $("#player-tribe").text($(this).parent().prop("id"));
-                $("#player-name").text(myGameData.defaultStats[name].alias)
                 myGameData.playerStats.hp = myGameData.defaultStats[name].maxHp;
                 myGameData.playerStats.maxHp = myGameData.defaultStats[name].maxHp;
-                currentPick = "enemy";
-                player.tribe = myGameData.tribes[$(this).parent().prop("id")];
+                player.tribe = myGameData.tribes[tribe];
                 myGameData.active[0] = name;
-                break;
-                case "enemy":
-                currentPick = "none";
-                enemy.tribe = myGameData.tribes[$(this).parent().prop("id")];
-                $("#enemy-health .thumbnail").removeClass($("#enemy-health .thumbnail").prop("className").split(" ")[0]);
-                $("#enemy-health .thumbnail").addClass(name);
-                $("#enemy-tribe").text($(this).parent().prop("id"));
-                $("#enemy-name").text(myGameData.defaultStats[name].alias)
-                myGameData.active[1] = name;
-                $("#overlay, #start-screen-ui").css({"display":"none"})
-                myGameArea.start();
-                break;
+                currentPick = "enemy";
+                $(this).parent().css("visibility","hidden");
+                playerTribe = $(this);
             }
-
+            else {
+                $(".swapper").off();
+                $("#overlay, #start-screen-ui").css({"display":"none"})
+                enemy.tribe = myGameData.tribes[tribe];
+                myGameData.active[1] = name;
+                $(".tribe").css("visibility","visible");
+                myGameArea.start();
+            };
         });
     },
     start: function() {
@@ -417,7 +422,7 @@ var myGameArea = {
         player.css("filter",player.tribe);
         $("#player-health").find(".thumbnail").css("filter",player.tribe);
 
-        $(".swapper").css("filter",enemy.tribe);
+        $("#swap-enemy .swapper").css("filter",enemy.tribe);
         $("#" + myGameData.active[1]).css("display","none");
         $("#enemy-health").find(".thumbnail").css("filter",enemy.tribe);
         enemy.css("filter",enemy.tribe);
@@ -456,32 +461,7 @@ var myGameArea = {
             myGameData.creatures.player[myGameData.active[0]].currFrame = 0;
         });
 
-        //Resume when the user returns to the game window
-        $(window).focus(function(){
-            clearTimeout(autoPause);
-            autoPause = undefined;
-            if (tick){return};
-            //Reloading images to fix flickering issues
-            var newPreloader = [];
-            for (var i = 0; i < preloader.length; i++) {
-                let newImg = new Image();
-                newImg.src = preloader[i].src;
-                newPreloader.push(newImg);
-            }
-            preloader = newPreloader;
-            newPreloader = null;
-            //Resume fps handler
-            tick = setInterval(myGameFunctions.update,17);
-        });
-
-        //Pause when the user leaves game window
-        $(window).blur(function(){
-            if (autoPause){return};
-            autoPause = setTimeout(function(){
-                clearInterval(tick);
-                tick = undefined;
-            },1000*60);
-        });
+        
     },
 };
 
@@ -516,17 +496,45 @@ enemy.tribe = myGameData.tribes["sunflower"];
 
 var tribeNames = Object.keys(myGameData.tribes);
 for (var i = 0; i < tribeNames.length; i++) {
-    const newTribe = $(`<div id="` + tribeNames[i] + `" class="tribe">
-    <p>` + tribeNames[i] + ` Tribe</p>
+    const name = tribeNames[i];
+    const newTribe = $(`<div id="` + name + `" class="tribe">
+    <p>` + name + ` Tribe</p>
     <div class="troll_1 swapper"></div>
     <div class="troll_2 swapper"></div>
     <div class="troll_3 swapper"></div>
 </div>`)
-    newTribe.css("filter",myGameData.tribes[tribeNames[i]]);
+    newTribe.css("filter",myGameData.tribes[name]);
     $("#start-screen-ui").append(newTribe);
 };
 
 myGameArea.loadUp();
+
+//Resume when the user returns to the game window
+$(window).focus(function(){
+    clearTimeout(autoPause);
+    autoPause = undefined;
+    if (tick){return};
+    //Reloading images to fix flickering issues
+    var newPreloader = [];
+    for (var i = 0; i < preloader.length; i++) {
+        let newImg = new Image();
+        newImg.src = preloader[i].src;
+        newPreloader.push(newImg);
+    }
+    preloader = newPreloader;
+    newPreloader = null;
+    //Resume fps handler
+    tick = setInterval(myGameFunctions.update,17);
+});
+
+//Pause when the user leaves game window
+$(window).blur(function(){
+    if (autoPause){return};
+    autoPause = setTimeout(function(){
+        clearInterval(tick);
+        tick = undefined;
+    },1000*60);
+});
 
 });
 
