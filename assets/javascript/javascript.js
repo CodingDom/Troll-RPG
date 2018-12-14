@@ -1,3 +1,9 @@
+/*
+As of right now, my code is very sloppy..
+This was meant to be my rough draft
+#WillBeCleanedSoon
+*/
+
 var tick;
 var autoPause;
 
@@ -22,23 +28,27 @@ var myGameData = {
         ["troll_1"]: {
             hp: 120,
             maxHp: 120,
-            power: 6,
-            counter: 5,
+            power: 4,
+            counter: 6,
+            alias: "Grunt",
         },
         ["troll_2"]: {
             hp: 150,
             maxHp: 150,
-            power: 8,
-            counter: 12,
+            power: 6,
+            counter: 13,
+            alias: "Brute",
         },
         ["troll_3"]: {
             hp: 180,
             maxHp: 180,
-            power: 10,
-            counter: 25,
+            power: 8,
+            counter: 28,
+            alias: "Chief",
         },
     },
     active: ["troll_1", "troll_3"], //The creatures on the battlefield
+    deaths: 0,
     creatures: {
         player: {},
         enemy: {}
@@ -47,6 +57,7 @@ var myGameData = {
         "grassland":"",
         "frostbite":"saturate(4) hue-rotate(90deg)",
         "sunflower":"saturate(7) hue-rotate(305deg)",
+        "poisonfang":"saturate(1) hue-rotate(200deg)"
     },
 }
 
@@ -65,6 +76,9 @@ var myGameFunctions = {
             maxHp = myGameData.playerStats.maxHp;
             active = myGameData.active[0];
         }
+        //Update name/tribe
+        $("#" + user + "-tribe").text()
+
         $(healthFrame + " .health-bar-background p").text(hp + "hp");
         $(healthFrame + " .health-bar").css("width",((hp/maxHp)*100) + "%");
         if (hp <= 0) {
@@ -189,6 +203,7 @@ var myGameFunctions = {
                 });
             });
         };
+        $("#enemy-name").text(myGameData.defaultStats[myGameData.active[1]].alias);
     },
     update: function(){ 
         for (var i = 0; i < myGameData.active.length; i++) {
@@ -222,9 +237,24 @@ var myGameFunctions = {
                     if (creature.currentAnim == "dead") {
                         anim.frame = anim.keyFrames.length-1;
                         if (troll.css("opacity") == 1) {
+                            entered = false;
                             troll.animate({"opacity":0},2000, function() {
                                 anim.frame = 0;
                                 creature.currentAnim = "idle";
+                                if (troll != player) {
+                                    entered = true;
+                                    myGameData.deaths++;
+                                    if (myGameData.deaths >= 3) {
+                                        alert("You win!"); //Not enough time to set up lose/win screen by deadline
+                                        location.reload();
+                                    }
+                                }
+                                else {
+                                    alert("You lose!") //Not enough time to set up lose/win screen by deadline
+                                    location.reload();
+                                    return;
+                                };
+                                
                             });
                         }
                     }
@@ -352,6 +382,8 @@ var myGameArea = {
                 $("#player-health .thumbnail").removeClass($("#player-health .thumbnail").prop("className").split(" ")[0]);
                 $("#player-health .thumbnail").addClass(name);
                 $("#player-power").text(myGameData.defaultStats[name].power*myGameData.playerStats.dmgMultiplier);
+                $("#player-tribe").text($(this).parent().prop("id"));
+                $("#player-name").text(myGameData.defaultStats[name].alias)
                 myGameData.playerStats.hp = myGameData.defaultStats[name].maxHp;
                 myGameData.playerStats.maxHp = myGameData.defaultStats[name].maxHp;
                 currentPick = "enemy";
@@ -361,11 +393,16 @@ var myGameArea = {
                 case "enemy":
                 currentPick = "none";
                 enemy.tribe = myGameData.tribes[$(this).parent().prop("id")];
+                $("#enemy-health .thumbnail").removeClass($("#enemy-health .thumbnail").prop("className").split(" ")[0]);
+                $("#enemy-health .thumbnail").addClass(name);
+                $("#enemy-tribe").text($(this).parent().prop("id"));
+                $("#enemy-name").text(myGameData.defaultStats[name].alias)
                 myGameData.active[1] = name;
                 $("#overlay, #start-screen-ui").css({"display":"none"})
                 myGameArea.start();
                 break;
             }
+
         });
     },
     start: function() {
