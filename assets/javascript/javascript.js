@@ -6,6 +6,7 @@ This was meant to be my rough draft
 
 var tick;
 var autoPause;
+var gameStatus = "intro";
 
 //Grabbing character divs
 var player;
@@ -369,6 +370,7 @@ var myGameArea = {
         }, 200);
     },
     intro: function() {
+        gameStatus = "intro";
         let currentPick = "player";
         $("#start-title").text("Select A Character");
         $("#gameplay-ui").css("display","none");
@@ -400,7 +402,7 @@ var myGameArea = {
                 $(this).parent().css("visibility","hidden");
                 playerTribe = $(this);
             }
-            else {
+            else if (currentPick == "enemy") {
                 $(".swapper").off();
                 $("#overlay, #start-screen-ui").css({"display":"none"})
                 enemy.tribe = myGameData.tribes[tribe];
@@ -412,6 +414,7 @@ var myGameArea = {
     },
     start: function() {
         tick = setInterval(myGameFunctions.update,17);
+        gameStatus = "playing";
 
         myGameFunctions.healthUpdate("player");
         myGameFunctions.healthUpdate("enemy");
@@ -513,7 +516,7 @@ myGameArea.loadUp();
 $(window).focus(function(){
     clearTimeout(autoPause);
     autoPause = undefined;
-    if (tick){return};
+    if (tick || gameStatus != "playing"){return};
     //Reloading images to fix flickering issues
     var newPreloader = [];
     for (var i = 0; i < preloader.length; i++) {
