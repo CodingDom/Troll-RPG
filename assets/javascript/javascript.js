@@ -2,6 +2,8 @@
 As of right now, my code is very sloppy..
 This was meant to be my rough draft
 #WillBeCleanedSoon
+
+Press spacebar to attack
 */
 
 var tick;
@@ -338,9 +340,14 @@ var myGameArea = {
         var loaded = 0;
 
         for (var i = 0; i < preloader.length; i++) {
-            preloader[i].onload = function() {
+            if (preloader[i].complete) {
                 loaded++;
-                $("#load-bar").css("width",((loaded/preloader.length)*100) + "%");
+            }
+            else {
+                preloader[i].onload = function() {
+                    loaded++;
+                    $("#load-bar").css("width",((loaded/preloader.length)*100) + "%");
+                };
             };
         };
 
@@ -516,7 +523,7 @@ myGameArea.loadUp();
 $(window).focus(function(){
     clearTimeout(autoPause);
     autoPause = undefined;
-    if (tick || gameStatus != "playing"){return};
+    if (tick){return};
     //Reloading images to fix flickering issues
     var newPreloader = [];
     for (var i = 0; i < preloader.length; i++) {
@@ -527,7 +534,9 @@ $(window).focus(function(){
     preloader = newPreloader;
     newPreloader = null;
     //Resume fps handler
+    if (gameStatus != "playing") {
     tick = setInterval(myGameFunctions.update,17);
+    };
 });
 
 //Pause when the user leaves game window
