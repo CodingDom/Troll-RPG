@@ -342,6 +342,7 @@ var myGameArea = {
         for (var i = 0; i < preloader.length; i++) {
             if (preloader[i].complete) {
                 loaded++;
+                $("#load-bar").css("width",((loaded/preloader.length)*100) + "%");
             }
             else {
                 preloader[i].onload = function() {
