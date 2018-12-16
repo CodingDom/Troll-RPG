@@ -534,7 +534,7 @@ $(window).focus(function(){
     preloader = newPreloader;
     newPreloader = null;
     //Resume fps handler
-    if (gameStatus != "playing") {
+    if (gameStatus == "playing") {
     tick = setInterval(myGameFunctions.update,17);
     };
 });
