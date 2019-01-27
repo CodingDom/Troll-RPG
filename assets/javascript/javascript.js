@@ -128,19 +128,20 @@ var myGameFunctions = {
         $(".swapper").css({"background-color":"rgba(0,0,0,0.5)"});
         creature.currentAnim = "walk";
         creature.currFrame = 0;
-        var originPos = parseInt(troll.parent().css("left").match(/\d+/)[0]); //Grabs number from string
-        var moveTo = window.innerHeight*0.4; //40% of the window height or 40vw
+        var originPos = parseInt(troll.parent().get()[0].style.left.match(/\d+/)[0]); //Grabs number from string
+        // var moveTo = window.innerHeight*0.4; //40% of the window height or 40vw
         var newPos;
         var direction;
         if (troll == player) {
-            newPos = originPos + moveTo + "px";
+            newPos = originPos + 40 + "vw";
             direction = 1;
         }
         else {
-            newPos = originPos - moveTo + "px";
+            newPos = originPos - 40 + "vw";
+            console.log(newPos, originPos);
             direction = -1;
         }
-        originPos = originPos + "px"; //Position to walk back to after attacking
+        originPos = originPos + "vw"; //Position to walk back to after attacking
         troll.parent().animate({"left":newPos},2000,function() {
             creature.currentAnim = "attack";   
             setTimeout(function() {
