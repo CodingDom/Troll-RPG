@@ -134,7 +134,7 @@ body {
 
 .health {
     position: absolute;
-    top: 10px;
+    top: 1%;
     height: 90px;
     width: 300px;
     background-color: rgba(245, 245, 220, 0.3);
@@ -142,11 +142,11 @@ body {
 }
 
 #player-health {
-    left: 20px;
+    left: 1%;
 }
 
 #enemy-health {
-    right: 20px;
+    right: 1%;
     transform: scaleX(-1);
 }
 
@@ -188,7 +188,6 @@ body {
     position: absolute;
     right: 0;
     top: 60%;
-    height: 15%;
     width: 70%;
     background-color: red;
     border: 1px solid black;
@@ -197,20 +196,22 @@ body {
 }
 
 .health-bar-background p {
-    position: absolute;
-    left: 35%;
+    position: relative;
+    z-index: 5;
 }
 
 .health-bar {
+    position: absolute;
     height: 100%;
     width: 75%;
+    top: 0;
     background-color: green;
     border-radius: 30px;
 }
 
 #swap-enemy {
     position: fixed;
-    right: 20px;
+    right: 1%;
     top: 125px;
     width: 100px;
     background-color: rgba(220, 241, 245, 0.5);
@@ -242,7 +243,7 @@ body {
 
 .char-holder {
     position: fixed;
-    width: 100vh;
+    width: 60%;
     height: 100%;
     bottom: -20%;
 }

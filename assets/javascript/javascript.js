@@ -129,7 +129,7 @@ var myGameFunctions = {
         creature.currentAnim = "walk";
         creature.currFrame = 0;
         var originPos = parseInt(troll.parent().css("left").match(/\d+/)[0]); //Grabs number from string
-        var moveTo = window.innerHeight*0.4; //40% of the window height or 40vh
+        var moveTo = window.innerHeight*0.4; //40% of the window height or 40vw
         var newPos;
         var direction;
         if (troll == player) {
@@ -183,10 +183,10 @@ var myGameFunctions = {
             $("#enemy-health").find(".thumbnail").css("background-image",$("#" + newTroll).css("background-image"));
             $("#" + newTroll).css("display","none");
             myGameData.active[1] = newTroll;
-            enemy.parent().css("left","185vh");
+            enemy.parent().css("left","185vw");
             enemy.css({"opacity":"1","filter":enemy.tribe});
             this.healthUpdate("enemy");
-            enemy.parent().animate({"left":"80vh"},5000,"linear", function() {
+            enemy.parent().animate({"left":"38vw"},5000,"linear", function() {
                 myGameData.creatures.enemy[myGameData.active[1]].currentAnim = "idle";
                 entered = true;
             });
@@ -194,7 +194,7 @@ var myGameFunctions = {
         else {
             myGameData.creatures.enemy[myGameData.active[1]].currentAnim = "walk";
             enemy.css("transform","scaleX(1)");
-            enemy.parent().animate({"left":"185vh"},5000,function(){
+            enemy.parent().animate({"left":"185vw"},5000,function(){
                 enemy.css("transform","scaleX(-1)");
                 if (myGameData.defaultStats[myGameData.active[1]].hp != 0) {
                     $("#" + myGameData.active[1]).css("display","block");
@@ -203,7 +203,7 @@ var myGameFunctions = {
                 $("#" + newTroll).css("display","none");
                 myGameData.active[1] = newTroll;        
                 myGameFunctions.healthUpdate("enemy");
-                enemy.parent().animate({"left":"80vh"},5000,"linear", function() {
+                enemy.parent().animate({"left":"38vw"},5000,"linear", function() {
                     myGameData.creatures.enemy[myGameData.active[1]].currentAnim = "idle";
                     entered = true;
                 });
@@ -427,8 +427,8 @@ var myGameArea = {
         myGameFunctions.healthUpdate("player");
         myGameFunctions.healthUpdate("enemy");
 
-        player.parent().css("left","-85vh");
-        enemy.parent().css("left","185vh");
+        player.parent().css("left","-85vw");
+        enemy.parent().css("left","185vw");
 
         player.css("filter",player.tribe);
         $("#player-health").find(".thumbnail").css("filter",player.tribe);
@@ -441,11 +441,11 @@ var myGameArea = {
 
         $("#gameplay-ui").css("display","block");
 
-        enemy.parent().animate({"left":"80vh"},5000,"linear", function() {
+        enemy.parent().animate({"left":"38vw"},5000,"linear", function() {
             myGameData.creatures.enemy[myGameData.active[1]].currentAnim = "idle";
         });
         
-        player.parent().animate({"left":"20vh"},5000,"linear", function() {
+        player.parent().animate({"left":"0vw"},5000,"linear", function() {
             myGameData.creatures.player[myGameData.active[0]].currentAnim = "idle";
             entered = true;
         });
