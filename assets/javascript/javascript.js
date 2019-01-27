@@ -129,19 +129,19 @@ var myGameFunctions = {
         creature.currentAnim = "walk";
         creature.currFrame = 0;
         var originPos = parseInt(troll.parent().get()[0].style.left.match(/\d+/)[0]); //Grabs number from string
-        // var moveTo = window.innerHeight*0.4; //40% of the window height or 40vw
+        // var moveTo = window.innerHeight*0.4; //40% of the window height or 40%
         var newPos;
         var direction;
         if (troll == player) {
-            newPos = originPos + 40 + "vw";
+            newPos = originPos + 25 + "%";
             direction = 1;
         }
         else {
-            newPos = originPos - 40 + "vw";
+            newPos = originPos - 25 + "%";
             console.log(newPos, originPos);
             direction = -1;
         }
-        originPos = originPos + "vw"; //Position to walk back to after attacking
+        originPos = originPos + "%"; //Position to walk back to after attacking
         troll.parent().animate({"left":newPos},2000,function() {
             creature.currentAnim = "attack";   
             setTimeout(function() {
@@ -184,10 +184,10 @@ var myGameFunctions = {
             $("#enemy-health").find(".thumbnail").css("background-image",$("#" + newTroll).css("background-image"));
             $("#" + newTroll).css("display","none");
             myGameData.active[1] = newTroll;
-            enemy.parent().css("left","185vw");
+            enemy.parent().css("left","100%");
             enemy.css({"opacity":"1","filter":enemy.tribe});
             this.healthUpdate("enemy");
-            enemy.parent().animate({"left":"38vw"},5000,"linear", function() {
+            enemy.parent().animate({"left":"38%"},5000,"linear", function() {
                 myGameData.creatures.enemy[myGameData.active[1]].currentAnim = "idle";
                 entered = true;
             });
@@ -195,7 +195,7 @@ var myGameFunctions = {
         else {
             myGameData.creatures.enemy[myGameData.active[1]].currentAnim = "walk";
             enemy.css("transform","scaleX(1)");
-            enemy.parent().animate({"left":"185vw"},5000,function(){
+            enemy.parent().animate({"left":"100%"},5000,function(){
                 enemy.css("transform","scaleX(-1)");
                 if (myGameData.defaultStats[myGameData.active[1]].hp != 0) {
                     $("#" + myGameData.active[1]).css("display","block");
@@ -204,7 +204,7 @@ var myGameFunctions = {
                 $("#" + newTroll).css("display","none");
                 myGameData.active[1] = newTroll;        
                 myGameFunctions.healthUpdate("enemy");
-                enemy.parent().animate({"left":"38vw"},5000,"linear", function() {
+                enemy.parent().animate({"left":"38%"},5000,"linear", function() {
                     myGameData.creatures.enemy[myGameData.active[1]].currentAnim = "idle";
                     entered = true;
                 });
@@ -428,8 +428,8 @@ var myGameArea = {
         myGameFunctions.healthUpdate("player");
         myGameFunctions.healthUpdate("enemy");
 
-        player.parent().css("left","-85vw");
-        enemy.parent().css("left","185vw");
+        player.parent().css("left","-55%");
+        enemy.parent().css("left","100%");
 
         player.css("filter",player.tribe);
         $("#player-health").find(".thumbnail").css("filter",player.tribe);
@@ -442,11 +442,11 @@ var myGameArea = {
 
         $("#gameplay-ui").css("display","block");
 
-        enemy.parent().animate({"left":"38vw"},5000,"linear", function() {
+        enemy.parent().animate({"left":"38%"},5000,"linear", function() {
             myGameData.creatures.enemy[myGameData.active[1]].currentAnim = "idle";
         });
         
-        player.parent().animate({"left":"0vw"},5000,"linear", function() {
+        player.parent().animate({"left":"0%"},5000,"linear", function() {
             myGameData.creatures.player[myGameData.active[0]].currentAnim = "idle";
             entered = true;
         });
@@ -478,23 +478,23 @@ var myGameArea = {
 };
 
 //Adding each set of animation tracks
-myGameArea.addAnim("troll_1","Idle", 10, "65%", "65%", "60%", Math.floor(Math.random()*3)+3, "loop");
-myGameArea.addAnim("troll_1","Walk", 10, "72%", "73%", "60%", 4, "loop");
-myGameArea.addAnim("troll_1","Dead", 10, "73%", "88%", "79%", 4, 1);
-myGameArea.addAnim("troll_1","Hurt", 10, "73%", "43%", "50%", 4, 1);
-myGameArea.addAnim("troll_1","Attack", 10, "100%", "", "", 4, 1);
+myGameArea.addAnim("troll_1","Idle", 10, "60%", "center", "95%", Math.floor(Math.random()*3)+3, "loop");
+myGameArea.addAnim("troll_1","Walk", 10, "72%", "center", "bottom", 4, "loop");
+myGameArea.addAnim("troll_1","Dead", 10, "73%", "center", "bottom", 4, 1);
+myGameArea.addAnim("troll_1","Hurt", 10, "73%", "center", "bottom", 4, 1);
+myGameArea.addAnim("troll_1","Attack", 10, "100%", "center", "bottom", 4, 1);
 
-myGameArea.addAnim("troll_2","Idle", 10, "65%", "65%", "60%", Math.floor(Math.random()*3)+3, "loop");
-myGameArea.addAnim("troll_2","Walk", 9, "72%", "73%", "60%", 4, "loop");
-myGameArea.addAnim("troll_2","Dead", 10, "73%", "88%", "79%", 4, 1);
-myGameArea.addAnim("troll_2","Hurt", 10, "73%", "43%", "50%", 4, 1);
-myGameArea.addAnim("troll_2","Attack", 10, "100%", "", "", 4, 1);
+myGameArea.addAnim("troll_2","Idle", 10, "60%", "center", "95%", Math.floor(Math.random()*3)+3, "loop");
+myGameArea.addAnim("troll_2","Walk", 9, "72%", "center", "bottom", 4, "loop");
+myGameArea.addAnim("troll_2","Dead", 10, "73%", "center", "bottom", 4, 1);
+myGameArea.addAnim("troll_2","Hurt", 10, "73%", "center", "bottom", 4, 1);
+myGameArea.addAnim("troll_2","Attack", 10, "100%", "center", "bottom", 4, 1);
 
-myGameArea.addAnim("troll_3","Idle", 10, "65%", "65%", "60%", Math.floor(Math.random()*3)+3, "loop");
-myGameArea.addAnim("troll_3","Walk", 9, "72%", "73%", "60%", 4, "loop");
-myGameArea.addAnim("troll_3","Dead", 10, "73%", "88%", "79%", 4, 1);
-myGameArea.addAnim("troll_3","Hurt", 10, "73%", "43%", "50%", 5, 1);
-myGameArea.addAnim("troll_3","Attack", 10, "100%", "", "", 4, 1);
+myGameArea.addAnim("troll_3","Idle", 10, "60%", "center", "95%", Math.floor(Math.random()*3)+3, "loop");
+myGameArea.addAnim("troll_3","Walk", 9, "72%", "center", "bottom", 4, "loop");
+myGameArea.addAnim("troll_3","Dead", 10, "73%", "center", "bottom", 4, 1);
+myGameArea.addAnim("troll_3","Hurt", 10, "73%", "center", "bottom", 5, 1);
+myGameArea.addAnim("troll_3","Attack", 10, "100%", "center", "bottom", 4, 1);
 
 
 //Where the game starts running
