@@ -340,7 +340,7 @@ var myGameArea = {
         var loaded = 0;
 
         for (var i = 0; i < preloader.length; i++) {
-            if (preloader[i].complete) {
+            if (preloader[i].complete) { //Checking if pictures are already loaded
                 loaded++;
                 $("#load-bar").css("width",((loaded/preloader.length)*100) + "%");
             }
@@ -515,7 +515,7 @@ for (var i = 0; i < tribeNames.length; i++) {
     <div class="troll_3 swapper"></div>
 </div>`)
     newTribe.css("filter",myGameData.tribes[name]);
-    $("#start-screen-ui").append(newTribe);
+    $("#tribe-container").append(newTribe);
 };
 
 myGameArea.loadUp();

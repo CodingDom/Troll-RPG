@@ -3,11 +3,32 @@ html,body {
     font-family: 'Bungee', cursive;
 }
 
+html {
+    font-size: 18px;
+}
+
+@media (min-width: 600px) {
+    html {
+        font-size: calc(18px + 14 * (100vw - 600px) / 600);
+    }
+}
+
+@media (min-width: 1200px) {
+    html {
+        font-size: 32px;
+    }
+}
+
 body {
     background-image: url("../images/backdrop.gif");
     background-size: cover;
+    background-position: center;
     background-repeat: no-repeat;
     overflow: hidden;
+}
+
+::-webkit-scrollbar {
+    display: none;
 }
 
 #ui-container {
@@ -23,12 +44,15 @@ body {
     width: 100%;
     z-index: 5;
     background-color: black;
+    text-align: center;
 }
 
 #load-container {
     position: absolute;
+    display: inline-block;
+    right: 0;
+    left: 0;
     margin-top: 45vh;
-    margin-left: 40vw;
     color: white;
     font-size: 32px;
 }
@@ -36,10 +60,10 @@ body {
 #load-bar-background {
     height: 10px;
     width: 300px;
+    display: inline-block;
     background-color: grey;
     border: 1px solid grey;
     border-radius: 30px;
-    text-align: center;
 }
 
 #load-bar {
@@ -56,23 +80,32 @@ body {
     width: 80%;
     top: 10%;
     left: 10%;
+    text-align: center;
+    font-size: 1rem;
     background-color: rgba(245, 245, 220, 0.3);
     border: 2px solid white;
+    overflow: hidden;
 }
 
 #start-title {
-    margin: 5% 0;
-    font-size: 32px;
-    text-align: center;
+    margin-top: 5%;
+    font-size: 1em;
 }
 
+#tribe-container {
+    width: 100%;
+    height: calc(93% - 3.2vw);
+    padding-right: 30px;
+    font-size: 0.7em;
+    overflow-y: auto;
+}
 
 .tribe {
-    float: left;
+    display: inline-block;
     width: 50vh;
     height: 20vh;
-    margin: 20px;
-    font-size: 24px;
+    margin: 2.5vh;
+    white-space: nowrap;
 }
 
 .swapper {
@@ -86,20 +119,17 @@ body {
 }
 
 .tribe .swapper {
-    float: left;
+    display: inline-block;
     width: 32%;
     height: 80%;
     background-color: rgba(60, 255, 0, 0.2);
-}
-
-.tribe:nth-child(even) {
-    margin-left: 8%;
 }
 
 #gameplay-ui {
     display: none;
     height: 100%;
     width: 100%;
+    font-size: 0.55rem;
 }
 
 .health {
