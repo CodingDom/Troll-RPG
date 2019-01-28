@@ -473,7 +473,7 @@ var myGameArea = {
             myGameData.creatures.player[myGameData.active[0]].currFrame = 0;
         });
 
-        $(document).on(".char-holder", "touchend", function(event) {
+        $(document).on("touchend", ".char-holder", function(event) {
             myGameFunctions.attack(player,"player",myGameData.active[0]);
         });
     },
