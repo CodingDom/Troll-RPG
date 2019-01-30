@@ -12,4 +12,5 @@ Troll RPG is a basic strategy game. The goal is to conquer the other tribes by d
 * An enemy's attack power will remain the same throughout the match
 
 ## Technologies
-<img align="middle" src="https://cdn-images-1.medium.com/max/1200/1*lJ32Bl-lHWmNMUSiSq17gQ.png" alt="HTML5" width="25%"/>   <img align="middle" src="http://2ality.com/2011/10/logo-js/js.jpg" alt="JavaScript" width="10%"/>    <img align="middle" src="https://cdn.worldvectorlogo.com/logos/jquery-1.svg" alt="JQuery" width="20%"/>
+
+<img align="middle" src="https://i.imgur.com/hoqTpFD.png" alt="HTML5" width="25%"/>    <img align="middle" src="http://2ality.com/2011/10/logo-js/js.jpg" alt="JavaScript" width="10%"/>    <img align="middle" src="https://cdn.worldvectorlogo.com/logos/jquery-1.svg" alt="JQuery" width="20%"/>
