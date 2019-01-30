@@ -1,6 +1,9 @@
 # Troll RPG
 ![Character Selection Screen](https://i.gyazo.com/c61662f41a0696296d4638affc6c028e.jpg)
 
+## Preview
+<img src="https://media.giphy.com/media/bLlwa5iJ63sOgIEa42/giphy.gif" alt="Gameplay Preview">
+
 ## About
 Troll RPG is a basic strategy game. The goal is to conquer the other tribes by defeating their toughest warriors. If attacks aren't planned accordingly then your tribe may wind up on the conquered end.
 
