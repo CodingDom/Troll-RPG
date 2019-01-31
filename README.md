@@ -1,4 +1,5 @@
-# Troll RPG [<img src="https://www.pngmart.com/files/3/Play-Now-Button-PNG-Pic.png" alt="Click Here To Play" height="53px" align="center">](https://codingdom.github.io/Troll-RPG/)
+[<img src="https://www.pngmart.com/files/3/Play-Now-Button-PNG-Pic.png" alt="Click Here To Play" height="53px" align="right">](https://codingdom.github.io/Troll-RPG/)
+# Troll RPG 
 <img src="https://i.gyazo.com/c61662f41a0696296d4638affc6c028e.jpg" alt="Characters" width="100%">
 
 ## Preview
