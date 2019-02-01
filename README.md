@@ -10,7 +10,7 @@
 
 
 ## About
-Troll RPG is a basic fighting/strategy game based on a war between four tribes. The goal is to conquer the other tribes by defeating their toughest warriors. If attacks aren't planned accordingly then your tribe may wind up on the losing end.
+<i><b>Troll RPG</b></i> is a basic fighting/strategy game based on a war between four tribes. The goal is to conquer the other tribes by defeating their toughest warriors. If attacks aren't planned accordingly then your tribe may wind up on the losing end.
 
 ## How To Play
 
