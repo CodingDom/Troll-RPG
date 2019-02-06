@@ -1,27 +1,26 @@
 /*
-As of right now, my code is very sloppy..
-This was meant to be my rough draft
-#WillBeCleanedSoon
+This is the rough draft of my troll rpg.
 
 Press spacebar to attack
 */
 
-var tick;
-var autoPause;
-var gameStatus = "intro";
+let tick;
+let autoPause;
+let gameStatus = "intro";
 
-//Grabbing character divs
-var player;
-var enemy;
+// Grabbing character divs
+let player;
+let enemy;
 
+// Preloading all of the sprite animations
 const images = "assets/images/";
-var preloader = []; //Preloading all of the sprite animations
+let preloader = []; 
 
-var debounce = false;
-var entered = false; 
+let debounce = false;
+let entered = false; 
 
-//Stored game data
-var myGameData = {
+// Stored game data
+const myGameData = {
     playerStats: {
         hp: 120,
         maxHp: 120,
@@ -50,7 +49,7 @@ var myGameData = {
             alias: "Chief",
         },
     },
-    active: ["troll_1", "troll_3"], //The creatures on the battlefield
+    active: ["troll_1", "troll_3"], // The creatures on the battlefield
     deaths: 0,
     creatures: {
         player: {},
@@ -64,8 +63,8 @@ var myGameData = {
     },
 }
 
-//All gameplay functions
-var myGameFunctions = {
+// All gameplay functions
+const myGameFunctions = {
     healthUpdate: function(user) {
         const healthFrame = "#" + user + "-health";
         let hp, maxHp, active;
@@ -79,7 +78,7 @@ var myGameFunctions = {
             maxHp = myGameData.playerStats.maxHp;
             active = myGameData.active[0];
         }
-        //Update name/tribe
+        // Update name/tribe
         $("#" + user + "-tribe").text()
 
         $(healthFrame + " .health-bar-background p").text(hp + "hp");
@@ -91,14 +90,14 @@ var myGameFunctions = {
     },
     damageDisplay: function(troll,dmg) {
         let newTag = $('<h2>');
-        //Default styling for damage display
+        // Default styling for damage display
         let style = {
             "position":"absolute",
             "top":"40%",
             "color":"red",
             "font-size":"24px",
         }
-        //Which side to base positioning on
+        // Which side to base positioning on
         let dir;
         if (troll == enemy) {
             dir = "left";
@@ -113,7 +112,7 @@ var myGameFunctions = {
         style[dir] = "53%";
         newTag.css(style);
         newTag.text("-" + dmg);
-        newTag.insertBefore(troll); //So troll will display in the foreground
+        newTag.insertBefore(troll); // So troll will display in the foreground
         newTag.animate({"top":"15%"},500);
         setTimeout(function() {
             newTag.animate({"opacity":0},350,function(){
@@ -128,8 +127,8 @@ var myGameFunctions = {
         $(".swapper").css({"background-color":"rgba(0,0,0,0.5)"});
         creature.currentAnim = "walk";
         creature.currFrame = 0;
-        var originPos = parseInt(troll.parent().get()[0].style.left.match(/\d+/)[0]); //Grabs number from string
-        // var moveTo = window.innerHeight*0.4; //40% of the window height or 40%
+        var originPos = parseInt(troll.parent().get()[0].style.left.match(/\d+/)[0]); // Grabs number from string
+        //  var moveTo = window.innerHeight*0.4; // 40% of the window height or 40%
         var newPos;
         var direction;
         if (troll == player) {
@@ -141,7 +140,7 @@ var myGameFunctions = {
             console.log(newPos, originPos);
             direction = -1;
         }
-        originPos = originPos + "%"; //Position to walk back to after attacking
+        originPos = originPos + "%"; // Position to walk back to after attacking
         troll.parent().animate({"left":newPos},2000,function() {
             creature.currentAnim = "attack";   
             setTimeout(function() {
@@ -149,7 +148,7 @@ var myGameFunctions = {
                     myGameData.creatures.enemy[myGameData.active[1]].currentAnim = "hurt";
                     enemy.css("filter",(enemy.tribe + "brightness(75%)"));
                     myGameFunctions.damageDisplay(enemy,myGameData.defaultStats[name].power*myGameData.playerStats.dmgMultiplier);
-                    //Boosting player's attack power
+                    // Boosting player's attack power
                     myGameData.playerStats.dmgMultiplier++;
                     $("#player-power").text(myGameData.defaultStats[name].power*myGameData.playerStats.dmgMultiplier);
                 }
@@ -158,11 +157,11 @@ var myGameFunctions = {
                     player.css("filter",(player.tribe + "brightness(75%)"));
                     myGameFunctions.damageDisplay(player,myGameData.defaultStats[name].counter);
                 };
-                //Reposition after attack animation is over
+                // Reposition after attack animation is over
                 setTimeout(function(){
                     creature.currentAnim = "walk";
                     creature['attack'].frame = 0;
-                    troll.css("transform","scaleX(" + -direction + ")"); //Turn back around
+                    troll.css("transform","scaleX(" + -direction + ")"); // Turn back around
                     troll.parent().animate({"left":originPos},2000,function() {
                         creature.currentAnim = "idle";
                         troll.css("transform","scaleX(" + direction + ")");
@@ -252,12 +251,12 @@ var myGameFunctions = {
                                     entered = true;
                                     myGameData.deaths++;
                                     if (myGameData.deaths >= 3) {
-                                        alert("You win!"); //Not enough time to set up lose/win screen by deadline
+                                        alert("You win!"); // Not enough time to set up lose/win screen by deadline
                                         location.reload();
                                     }
                                 }
                                 else {
-                                    alert("You lose!") //Not enough time to set up lose/win screen by deadline
+                                    alert("You lose!") // Not enough time to set up lose/win screen by deadline
                                     location.reload();
                                     return;
                                 };
@@ -279,12 +278,12 @@ var myGameFunctions = {
     },
 };
 
-//Setting up the game
-var myGameArea = {
+// Setting up the game
+const myGameArea = {
     addAnim: function(creature, animName, frames, size, bgX, bgY, wait, plays) {
-        const originName = animName; //Before it changes to lower case
-        //Creating seperate character objects for both player and enemy
-        for (var i = 0; i < 2; i++) {
+        const originName = animName; // Before it changes to lower case
+        // Creating seperate character objects for both player and enemy
+        for (let i = 0; i < 2; i++) {
         let user;
         if (i == 0) {
             user = "player";
@@ -292,31 +291,31 @@ var myGameArea = {
         else {
             user = "enemy";
         };
-        //Checking for existing creature name
+        // Checking for existing creature name
         let newCreature = myGameData.creatures[user][creature];
         if (!newCreature) {
             newCreature = {};
         };
         
-        newCreature.currFrame = 0; //FPS useage
+        newCreature.currFrame = 0; // FPS useage
     
         newCreature.currentAnim = "walk";   
     
         animName = animName.toLowerCase();
         newCreature[animName] = {};
         newCreature[animName].keyFrames = [];
-        newCreature[animName].wait = wait; //How long to wait between keyFrames
-        newCreature[animName].frame = 0; //Animation's current keyFrame
-        newCreature[animName].plays = plays; //Amount of times to play animation
+        newCreature[animName].wait = wait; // How long to wait between keyFrames
+        newCreature[animName].frame = 0; // Animation's current keyFrame
+        newCreature[animName].plays = plays; // Amount of times to play animation
     
-        //Background image sizing/positioning for different sized png animation tracks
+        // Background image sizing/positioning for different sized png animation tracks
         newCreature[animName].bgX = bgX;
         newCreature[animName].bgY = bgY;
         newCreature[animName].size = size;
         
-        //Looping through current animation's keyFrames
+        // Looping through current animation's keyFrames
         for (let i = 0; i < frames; i++) {
-            //Checking how many 0's to place before keyFrame number
+            // Checking how many 0's to place before keyFrame number
             let pos = i;
             if (i < 10) {
                 pos = "00" + i;
@@ -324,24 +323,24 @@ var myGameArea = {
             else if (i < 100) {
                 pos = "0" + i;
             }
-            //Adding image location to the current animation's keyFrame list
+            // Adding image location to the current animation's keyFrame list
             newCreature[animName].keyFrames.push(images + creature + "/" + originName + "_" + pos + ".png");
             if (user == "player") {
-                //Preloading each image
+                // Preloading each image
                 preloader.unshift(new Image());
                 preloader[0].src = images + creature + "/" + originName + "_" + pos + ".png";
             }
         };
         
-        myGameData.creatures[user][creature] = newCreature; //To ensure the creature is up to date within the list of creatures
+        myGameData.creatures[user][creature] = newCreature; // To ensure the creature is up to date within the list of creatures
         };
         
     },
     loadUp: function(){
-        var loaded = 0;
+        let loaded = 0;
 
-        for (var i = 0; i < preloader.length; i++) {
-            if (preloader[i].complete) { //Checking if pictures are already loaded
+        for (let i = 0; i < preloader.length; i++) {
+            if (preloader[i].complete) { // Checking if pictures are already loaded
                 loaded++;
                 $("#load-bar").css("width",((loaded/preloader.length)*100) + "%");
             }
@@ -353,9 +352,9 @@ var myGameArea = {
             };
         };
 
-        var numDots = 0;
+        let numDots = 0;
 
-        var loading = setInterval(function() {
+        let loading = setInterval(function() {
             if (loaded >= preloader.length) {
                 $("#load-text").text("Loaded");
                 myGameArea.intro();
@@ -369,7 +368,7 @@ var myGameArea = {
                 clearInterval(loading);
                 return;
             };
-            var dots = "";
+            let dots = "";
             for (var i = 0; i < numDots; i++) {
                 dots += ".";
             }
@@ -390,13 +389,13 @@ var myGameArea = {
 
         clearInterval(tick);
 
-        var playerTribe; //To unhide tribe lists after picking is over
-        $(".swapper").off(); //Make sure no other events are connected to the function
+        let playerTribe; // To unhide tribe lists after picking is over
+        $(".swapper").off(); // Make sure no other events are connected to the function
         $(".swapper").on("click", function(event) {
-            var tribe = $(this).parent().prop("id");
-            var name = this.className.split(" ")[0];
+            const tribe = $(this).parent().prop("id");
+            const name = this.className.split(" ")[0];
             
-            $("#" + currentPick + "-health .thumbnail").attr("class",name + " thumbnail"); //Updating health gui thumbnails
+            $("#" + currentPick + "-health .thumbnail").attr("class",name + " thumbnail"); // Updating health gui thumbnails
             $("#" + currentPick + "-tribe").text(tribe);
             $("#" + currentPick + "-name").text(myGameData.defaultStats[name].alias)
 
@@ -461,7 +460,7 @@ var myGameArea = {
             if (entered != true) {
                 return;
             };
-            var key = event.key.toLowerCase();
+            const key = event.key.toLowerCase();
             switch (key) {
                 case " ":
                 myGameFunctions.attack(player,"player",myGameData.active[0]);
@@ -479,7 +478,7 @@ var myGameArea = {
     },
 };
 
-//Adding each set of animation tracks
+// Adding each set of animation tracks
 myGameArea.addAnim("troll_1","Idle", 10, "60%", "center", "95%", Math.floor(Math.random()*3)+3, "loop");
 myGameArea.addAnim("troll_1","Walk", 10, "72%", "center", "bottom", 4, "loop");
 myGameArea.addAnim("troll_1","Dead", 10, "73%", "center", "bottom", 4, 1);
@@ -499,7 +498,7 @@ myGameArea.addAnim("troll_3","Hurt", 10, "73%", "center", "bottom", 5, 1);
 myGameArea.addAnim("troll_3","Attack", 10, "100%", "center", "bottom", 4, 1);
 
 
-//Where the game starts running
+// Where the game starts running
 $(document).ready(function(){
 
 player = $("#player");
@@ -508,8 +507,9 @@ enemy = $("#enemy");
 player.tribe = myGameData.tribes["grassland"];
 enemy.tribe = myGameData.tribes["sunflower"];
 
-var tribeNames = Object.keys(myGameData.tribes);
-for (var i = 0; i < tribeNames.length; i++) {
+// Creating tribe selection screen
+const tribeNames = Object.keys(myGameData.tribes);
+for (let i = 0; i < tribeNames.length; i++) {
     const name = tribeNames[i];
     const newTribe = $(`<div id="` + name + `" class="tribe">
     <p>` + name + ` Tribe</p>
@@ -519,31 +519,34 @@ for (var i = 0; i < tribeNames.length; i++) {
 </div>`)
     newTribe.css("filter",myGameData.tribes[name]);
     $("#tribe-container").append(newTribe);
+    if ($("#tribe-container .tribe").length%2 == 0) {
+        $("#tribe-container").append("<br>");
+    };
 };
 
 myGameArea.loadUp();
 
-//Resume when the user returns to the game window
+// Resume when the user returns to the game window
 $(window).focus(function(){
     clearTimeout(autoPause);
     autoPause = undefined;
     if (tick){return};
-    //Reloading images to fix flickering issues
-    var newPreloader = [];
-    for (var i = 0; i < preloader.length; i++) {
+    // Reloading images to fix flickering issues
+    let newPreloader = [];
+    for (let i = 0; i < preloader.length; i++) {
         let newImg = new Image();
         newImg.src = preloader[i].src;
         newPreloader.push(newImg);
     }
     preloader = newPreloader;
     newPreloader = null;
-    //Resume fps handler
+    // Resume fps handler
     if (gameStatus == "playing") {
     tick = setInterval(myGameFunctions.update,17);
     };
 });
 
-//Pause when the user leaves game window
+// Pause when the user leaves game window
 $(window).blur(function(){
     if (autoPause){return};
     autoPause = setTimeout(function(){
