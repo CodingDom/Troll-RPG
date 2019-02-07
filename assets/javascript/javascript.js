@@ -121,7 +121,7 @@ const myGameFunctions = {
         },200);
     },
     attack: function(troll,user,name) {
-        if (enemy.css("opacity") != 1 || player.css("opacity") != 1) {return;};
+        if (enemy.css("opacity") != 1 || player.css("opacity") != 1 || (!entered && troll == player)) {return;};
         entered = false;
         const creature = myGameData.creatures[user][name];
         $(".swapper").css({"background-color":"rgba(0,0,0,0.5)"});
@@ -472,7 +472,8 @@ const myGameArea = {
             myGameData.creatures.player[myGameData.active[0]].currFrame = 0;
         });
 
-        $(document).on("touchend", ".char-holder", function(event) {
+        $("#gameplay-ui").on("click", function(event) {
+            if (this != event.target) return;
             myGameFunctions.attack(player,"player",myGameData.active[0]);
         });
     },
