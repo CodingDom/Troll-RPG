@@ -21,4 +21,4 @@
 
 ## Technologies
 
-<img align="middle" src="https://i.imgur.com/hoqTpFD.png" alt="HTML5" width="25%"/>&nbsp; &nbsp;<img align="middle" src="http://2ality.com/2011/10/logo-js/js.jpg" alt="JavaScript" width="10%"/>&nbsp; &nbsp; &nbsp; <img align="middle" src="https://cdn.worldvectorlogo.com/logos/jquery-1.svg" alt="JQuery" width="20%"/>
+<img align="middle" src="https://i.imgur.com/hoqTpFD.png" alt="HTML5" width="25%"/>&nbsp; &nbsp; <img align="middle" src="https://i.imgur.com/XwLI0e8.jpg" alt="JavaScript" title="JavaScript" width="10%"/>&nbsp; &nbsp;<img align="middle" src="https://i.imgur.com/ZUFpkpN.png" alt="JQuery" title="JQuery" width="20%"/>
